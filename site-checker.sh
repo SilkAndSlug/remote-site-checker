@@ -26,9 +26,9 @@ set -u;
 
 
 # load definitions
-source "/home/steve/silkandslug/tools/includes/definitions.sh";
+source "/home/steve/silkandslug/tools/site-checker/dev/includes/definitions.sh";
 # load functions
-source "/home/steve/silkandslug/tools/functions/site-checker.sh";
+source "/home/steve/silkandslug/tools/site-checker/dev/functions/site-checker.sh";
 
 main() {
 	init "$@";
