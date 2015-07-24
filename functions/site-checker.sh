@@ -248,7 +248,7 @@ function download_site() {
 
 
 	# empty report
-	rm "$REPORT_FILE";
+	if [[ -f "$REPORT_FILE" ]]; then rm "$REPORT_FILE"; fi;
 
 
 	local COOKIES="--keep-session-cookies --load-cookies $COOKIE_FILE";
@@ -300,7 +300,7 @@ function check_site_for_HTTP_errors() {
 	
 	# rename, delete
 	mv $TMP_FILE $REPORT_FILE;
-	rm $TMP_FILE;
+	if [[ -f "$TMP_FILE" ]]; then rm "$TMP_FILE"; fi;
 
 
 	return 0;
