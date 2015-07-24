@@ -8,12 +8,22 @@
 
 
 #####
+# constants
+#####
+
+# debug levels
+QUIET=0;
+INFO=1;
+VERBOSE=2;
+DEBUG=3;
+
+
+
+#####
 # internal vars
 #####
 
 DEBUG_LEVEL=0;
-
-DIR=$(dirname $(readlink -f $0));
 
 CONFIG_FILE="";
 DOMAIN="";
@@ -26,6 +36,7 @@ IS_CRONJOB=false;
 REPORT_ONLY=false;
 TARGET="";
 USERNAME="";
+
 
 
 #####
