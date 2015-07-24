@@ -258,7 +258,7 @@ function download_site() {
 
 	# wait 1sec, unless we're on the DEV server
 	local WAIT="--wait 1";
-	if [ "dev.silkandslug.com" == $($DOMAIN,,) ]; then
+	if [ "dev.silkandslug.com" == $(echo $DOMAIN,,) ]; then
 		WAIT="";
 	fi;
 
