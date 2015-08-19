@@ -83,7 +83,7 @@ function main() {
 		check_site_for_PHP_errors ;
 		if [ "$?" -gt 0 ]; then return "$?"; fi;
 	fi;
-	
+
 
 	local ERROR_COUNT=$(( `cat $REPORT_FILE | wc -l` / 3 ));
 	if [ 0 -lt $ERROR_COUNT ]; then
@@ -99,7 +99,7 @@ function main() {
 
 
 
-	
+
 	return 0;
 }
 
@@ -311,6 +311,7 @@ function login() {
 	$COMMAND;
 	if [ "$?" -gt 0 ]; then return $?; fi;
 
+
 	return 0;
 }
 
@@ -356,20 +357,20 @@ function check_site_for_HTTP_errors() {
 
 	# strip lines
 	sed -i "s|Reusing existing connection to [^:]*:80\.||" $TMP_FILE ;
-	
+
 	# strip times
 	sed -i "s|--[^h]*||" $TMP_FILE ;
-	
+
 	# strip text before error
 	sed -i "s|HTTP request sent, awaiting response... ||" $TMP_FILE ;
-	
+
 	# strip empty lines
 	sed -i 'n;d' $TMP_FILE ;
-	
+
 	# add empty line after error
 	sed -i '/^[0-9]/G' $TMP_FILE ;
 
-	
+
 	# rename, delete
 	mv $TMP_FILE $REPORT_FILE;
 	if [[ -f "$TMP_FILE" ]]; then rm "$TMP_FILE"; fi;
