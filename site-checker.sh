@@ -385,16 +385,16 @@ function check_site_for_PHP_errors() {
 	if [ $DEBUG_LEVEL -ge "$INFO" ]; then echo "site-checker::check_site_for_PHP_errors"; fi;
 
 
-	grep -r '^Fatal error: ' $SITE_DIR >> $REPORT_FILE;
+	grep -r '^Fatal error: ' "$SITE_DIR" >> "$REPORT_FILE";
 	if [ "$?" -gt 0 ]; then return "$?"; fi;
 
-	grep -r '^Warning: ' $SITE_DIR >> $REPORT_FILE;
+	grep -r '^Warning: ' "$SITE_DIR" >> "$REPORT_FILE";
 	if [ "$?" -gt 0 ]; then return "$?"; fi;
 
-	grep -r '^Notice: ' $SITE_DIR >> $REPORT_FILE;
+	grep -r '^Notice: ' "$SITE_DIR" >> "$REPORT_FILE";
 	if [ "$?" -gt 0 ]; then return "$?"; fi;
 
-	grep -r '^Strict Standards: ' $SITE_DIR >> $REPORT_FILE;
+	grep -r '^Strict Standards: ' "$SITE_DIR" >> "$REPORT_FILE";
 	if [ "$?" -gt 0 ]; then return "$?"; fi;
 
 
