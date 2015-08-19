@@ -63,7 +63,12 @@ USERNAME="";
 #####
 
 function main() {
+	local RETURN;
+
+
 	init "$@";
+	RETURN=$?;
+	echo "main::init $RETURN";
 	if [ "$?" -gt 0 ]; then return "$?"; fi;
 
 
@@ -126,9 +131,12 @@ function echo_usage() {
 
 
 function init() {
+	local RETURN ;
 
 	read_config_from_file "$@";
-	if [ "$?" -gt 0 ]; then return $?; fi;
+	RETURN=$?;
+	echo "init::read_config_from_file $RETURN";
+	if [ "$RETURN" -gt 0 ]; then return $?; fi;
 
 	read_config_from_command_line "$@";
 	if [ "$?" -gt 0 ]; then return $?; fi;
@@ -302,7 +310,9 @@ function login() {
 	local VERBOSITY="-q";
 	if [ $DEBUG_LEVEL -ge "$INFO" ]; then VERBOSITY="-vvv"; fi;
 
+	echo "login::COOKIE_FILE $COOKIE_FILE";
 	local COOKIES="--keep-session-cookies --save-cookies $COOKIE_FILE";
+	echo "login::COOKIES $COOKIES";
 
 	local LOGIN="--post-data username=$USERNAME&password=$PASSWORD --delete-after";
 
