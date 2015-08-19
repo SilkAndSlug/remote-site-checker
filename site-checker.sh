@@ -277,7 +277,7 @@ function update_internal_vars_with_config() {
 	SITE_DIR="$SITES_DIR/$DOMAIN";
 
 	if [[ ! -z "$HTTP_USERNAME" && ! -z "$HTTP_PASSWORD" ]]; then
-		HTTP_LOGIN="--http-user=$HTTP_USERNAME --http-password=$HTTP_PASSWORD";
+		HTTP_LOGIN="--auth-no-challenge --http-user=$HTTP_USERNAME --http-password=$HTTP_PASSWORD";
 	fi;
 
 	return 0;
@@ -304,8 +304,9 @@ function login() {
 
 	local COOKIES="--keep-session-cookies --save-cookies $COOKIE_FILE";
 
+	local LOGIN="--post-data username=$USERNAME&password=$PASSWORD --delete-after";
 
-	local COMMAND="wget $VERBOSITY $HTTP_LOGIN $COOKIES --auth-no-challenge --post-data username=$USERNAME&password=$PASSWORD $TARGET/$FORM ";
+	local COMMAND="wget $VERBOSITY $HTTP_LOGIN $COOKIES $LOGIN $TARGET/$FORM";
 	if [ $DEBUG_LEVEL -ge "$DEBUG" ]; then echo "login: $COMMAND"; fi;
 
 	$COMMAND;
