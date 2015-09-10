@@ -44,6 +44,7 @@ DEBUG=3;
 
 DEBUG_LEVEL=0;
 
+COOKIE_FILE="";
 CONFIG_FILE="";
 DOMAIN="";
 FORM=User/Login;
@@ -310,9 +311,7 @@ function login() {
 	local VERBOSITY="-q";
 	if [ $DEBUG_LEVEL -ge "$INFO" ]; then VERBOSITY="-vvv"; fi;
 
-	echo "login::COOKIE_FILE $COOKIE_FILE";
 	local COOKIES="--keep-session-cookies --save-cookies $COOKIE_FILE";
-	echo "login::COOKIES $COOKIES";
 
 	local LOGIN="--post-data username=$USERNAME&password=$PASSWORD --delete-after";
 
