@@ -47,6 +47,7 @@ DEBUG_LEVEL=0;
 COOKIE_FILE="";
 CONFIG_FILE="";
 DOMAIN="";
+EXCLUDE_DIRS="";
 FORM=User/Login;
 HTTP_PASSWORD="";
 HTTP_USERNAME="";
@@ -120,7 +121,8 @@ function echo_usage() {
 	echo "-u|--user		username for login form";
 	echo "--http-username		HTTP-login for TARGET";
 	echo "--http-password		HTTP-login for TARGET";
-	echo "-p|--password		password for login form";
+	echo "-p|--password		Password for login form";
+	echo "-X|--exclude-directories		Comma-separated(?) list of /directories/ to NOT crawl";
 	echo "-ro|--report-only		Don't crawl site; report on previous crawls"
 	echo "-v increase verbosity (-v = info; -vv = verbose; -vvv = debug)";
 	echo "";
@@ -239,6 +241,11 @@ function read_config_from_command_line() {
 				# debugging++
 				DEBUG_LEVEL=$(($DEBUG_LEVEL+1));
 				;;
+
+			-X|--exclude-directories )
+				EXCLUDE_DIRS="$2";
+				shift;	# past argument
+				;;
 		esac
 		shift # past argument
 	done
@@ -337,6 +344,11 @@ function download_site() {
 	local LOG="--output-file $LOG_FILE";
 	local MIRROR="--mirror -e robots=off --page-requisites --no-parent";
 
+	local exclude_clause="";
+	if [ ! -z $EXCLUDE_DIRS ]; then
+		local exclude_clause="--exclude-directories=$EXCLUDE_DIRS";
+	fi;
+
 
 	# wait 1sec, unless we're hitting the DEV server
 	local WAIT="--wait 1";
@@ -345,7 +357,8 @@ function download_site() {
 	fi;
 
 
-	local COMMAND="wget $HTTP_LOGIN $COOKIES $LOG $MIRROR $WAIT --directory-prefix $SITES_DIR $TARGET";
+	# -nd is a workaround for wget's 'pathconf: not a directory' error/bug
+	local COMMAND="wget --no-directories $exclude_clause $HTTP_LOGIN $COOKIES $LOG $MIRROR $WAIT --directory-prefix $SITES_DIR $TARGET";
 	if [ $DEBUG_LEVEL -ge "$DEBUG" ]; then echo "download_site: $COMMAND"; fi;
 
 	$COMMAND;
