@@ -64,12 +64,11 @@ USERNAME="";
 #####
 
 function main() {
-	local RETURN;
+	local status;
 
 
 	init "$@";
-	RETURN=$?;
-	echo "main::init $RETURN";
+	status=$?;
 	if [ "$?" -gt 0 ]; then return "$?"; fi;
 
 
@@ -132,12 +131,12 @@ function echo_usage() {
 
 
 function init() {
-	local RETURN ;
+	local status ;
 
 	read_config_from_file "$@";
-	RETURN=$?;
-	echo "init::read_config_from_file $RETURN";
-	if [ "$RETURN" -gt 0 ]; then return $?; fi;
+	status=$?;
+	#echo "init::read_config_from_file $status";
+	if [ "$status" -gt 0 ]; then return $?; fi;
 
 	read_config_from_command_line "$@";
 	if [ "$?" -gt 0 ]; then return $?; fi;
@@ -339,7 +338,7 @@ function download_site() {
 	local MIRROR="--mirror -e robots=off --page-requisites --no-parent";
 
 
-	# wait 1sec, unless we're on the DEV server
+	# wait 1sec, unless we're hitting the DEV server
 	local WAIT="--wait 1";
 	if [ "dev.silkandslug.com" == $(echo $DOMAIN,,) ]; then
 		WAIT="";
