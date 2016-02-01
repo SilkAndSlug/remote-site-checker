@@ -433,7 +433,7 @@ function check_for_PHP_errors() {
 	fi;
 
 
-	echo "No PHP errors found";
+	echo "...okay";
 
 	return 0;
 }
@@ -456,7 +456,7 @@ function check_for_PHPTAL_errors() {
 	fi;
 
 
-	echo "No PHPTAL errors found";
+	echo "...okay";
 
 	return 0;
 }
