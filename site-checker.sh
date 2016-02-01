@@ -93,24 +93,22 @@ function init() {
 	local status ;
 
 	read_config_from_file "$@";
-	status=$?;
-	#echo "init::read_config_from_file $status";
-	if [ "$status" -gt 0 ]; then return $?; fi;
+	if [ "$?" -ne 0 ]; then return $?; fi;
 
 	read_config_from_command_line "$@";
-	if [ "$?" -gt 0 ]; then return $?; fi;
+	if [ "$?" -ne 0 ]; then return $?; fi;
 
 	read_target_from_command_line "$@";
-	if [ "$?" -gt 0 ]; then return $?; fi;
+	if [ "$?" -ne 0 ]; then return $?; fi;
 
 	extract_domain_from_target ;
-	if [ "$?" -gt 0 ]; then return $?; fi;
+	if [ "$?" -ne 0 ]; then return $?; fi;
 
 	update_internal_vars_with_config ;
-	if [ "$?" -gt 0 ]; then return $?; fi;
+	if [ "$?" -ne 0 ]; then return $?; fi;
 
 	init_dirs ;
-	if [ "$?" -gt 0 ]; then return $?; fi;
+	if [ "$?" -ne 0 ]; then return $?; fi;
 
 
 	return 0;
