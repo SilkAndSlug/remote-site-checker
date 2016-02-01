@@ -382,6 +382,29 @@ function check_site_for_PHP_errors() {
 }
 
 
+function check_for_PHPTAL_errors() {
+	if [ $DEBUG_LEVEL -ge "$INFO" ]; then echo "site-checker::check_for_PHPTAL_errors"; fi;
+
+	echo "Testing site for PHPTAL errors..."
+
+	is_okay=true;
+
+	grep $GREP_PARAMS 'Error: ' "$SITE_DIR" >> "$REPORT_FILE";
+	if [ "$?" -ne 0 ]; then is_okay=false; fi;
+
+
+	if [ false = "$is_okay" ]; then
+		echoerr "Found PHPTAL errors; quitting";
+		return 1;
+	fi;
+
+
+	echo "No PHPTAL errors found";
+
+	return 0;
+}
+
+
 function seconds2time () {
 	if [ $# -ne 1 ]; then
 		echoerr "Usage: seconds2time {seconds}";
