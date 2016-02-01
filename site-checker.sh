@@ -42,19 +42,22 @@ DEBUG=3;
 # internal vars
 #####
 
-DEBUG_LEVEL=0;
+DEBUG_LEVEL=$QUIET;
 
 COOKIE_FILE="";
 CONFIG_FILE="";
 DOMAIN="";
 EXCLUDE_DIRS="";
-FORM=User/Login;
+FORM="User/Login";
 HTTP_PASSWORD="";
 HTTP_USERNAME="";
 HTTP_LOGIN="";
+LOG_FILE="";
 PASSWORD="";
 IS_CRONJOB=false;
+REPORT_FILE="";
 REPORT_ONLY=false;
+SITE_DIR="";
 TARGET="";
 USERNAME="";
 
