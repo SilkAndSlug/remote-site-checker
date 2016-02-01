@@ -25,6 +25,9 @@ REPORTS_DIR="$TMP_DIR/reports";
 SITES_DIR="$TMP_DIR/sites";
 
 
+# recursive, 2 prior lines, ignore Silk-Framework, images, etc
+GREP_PARAMS="-B 2 --exclude-dir=vendors/ --exclude-dir=silk/ --exclude-dir=data/ --exclude-dir=images/ --exclude=*.jpg -r";
+
 
 #####
 # constants
