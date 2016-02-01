@@ -403,21 +403,30 @@ function check_for_HTTP_errors() {
 }
 
 
-function check_site_for_PHP_errors() {
-	if [ $DEBUG_LEVEL -ge "$INFO" ]; then echo "site-checker::check_site_for_PHP_errors"; fi;
+function check_for_PHP_errors() {
+	if [ $DEBUG_LEVEL -ge "$INFO" ]; then echo "site-checker::check_for_PHP_errors"; fi;
+
+	echo "Testing site for PHP errors..."
+
+	is_okay=true;
+
+	grep $GREP_PARAMS '^Fatal error: ' "$SITE_DIR" >> "$REPORT_FILE";
+	if [ "$?" -ne 0 ]; then is_okay=false; fi;
+
+	grep $GREP_PARAMS '^Warning: ' "$SITE_DIR" >> "$REPORT_FILE";
+	if [ "$?" -ne 0 ]; then is_okay=false; fi;
+
+	grep $GREP_PARAMS '^Notice: ' "$SITE_DIR" >> "$REPORT_FILE";
+	if [ "$?" -ne 0 ]; then is_okay=false; fi;
+
+	grep $GREP_PARAMS '^Strict Standards: ' "$SITE_DIR" >> "$REPORT_FILE";
+	if [ "$?" -ne 0 ]; then is_okay=false; fi;
 
 
-	grep -r '^Fatal error: ' "$SITE_DIR" >> "$REPORT_FILE";
-	if [ "$?" -gt 0 ]; then return "$?"; fi;
-
-	grep -r '^Warning: ' "$SITE_DIR" >> "$REPORT_FILE";
-	if [ "$?" -gt 0 ]; then return "$?"; fi;
-
-	grep -r '^Notice: ' "$SITE_DIR" >> "$REPORT_FILE";
-	if [ "$?" -gt 0 ]; then return "$?"; fi;
-
-	grep -r '^Strict Standards: ' "$SITE_DIR" >> "$REPORT_FILE";
-	if [ "$?" -gt 0 ]; then return "$?"; fi;
+	if [ false = "$is_okay" ]; then
+		echoerr "Found PHP errors; quitting";
+		return 1;
+	fi;
 
 
 	echo "No PHP errors found";
