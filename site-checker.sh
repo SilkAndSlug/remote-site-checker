@@ -413,17 +413,18 @@ function check_for_PHP_errors() {
 
 	is_okay=true;
 
+	# grep returns 1 if nothing found
 	grep $GREP_PARAMS '^Fatal error: ' "$SITE_DIR" >> "$REPORT_FILE";
-	if [ "$?" -ne 0 ]; then is_okay=false; fi;
+	if [ "$?" -ne 1 ]; then is_okay=false; fi;
 
 	grep $GREP_PARAMS '^Warning: ' "$SITE_DIR" >> "$REPORT_FILE";
-	if [ "$?" -ne 0 ]; then is_okay=false; fi;
+	if [ "$?" -ne 1 ]; then is_okay=false; fi;
 
 	grep $GREP_PARAMS '^Notice: ' "$SITE_DIR" >> "$REPORT_FILE";
-	if [ "$?" -ne 0 ]; then is_okay=false; fi;
+	if [ "$?" -ne 1 ]; then is_okay=false; fi;
 
 	grep $GREP_PARAMS '^Strict Standards: ' "$SITE_DIR" >> "$REPORT_FILE";
-	if [ "$?" -ne 0 ]; then is_okay=false; fi;
+	if [ "$?" -ne 1 ]; then is_okay=false; fi;
 
 
 	if [ false = "$is_okay" ]; then
@@ -446,7 +447,7 @@ function check_for_PHPTAL_errors() {
 	is_okay=true;
 
 	grep $GREP_PARAMS 'Error: ' "$SITE_DIR" >> "$REPORT_FILE";
-	if [ "$?" -ne 0 ]; then is_okay=false; fi;
+	if [ "$?" -ne 1 ]; then is_okay=false; fi;
 
 
 	if [ false = "$is_okay" ]; then
