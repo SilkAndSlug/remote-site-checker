@@ -1,6 +1,6 @@
 #!/bin/bash
 
-## Crawls the given URL, checking for wget errors (e.g. HTTP 404) and PHP 
+## Crawls the given URL, checking for wget errors (e.g. HTTP 404) and PHP
 ## errors (e.g. FATAL)
 
 
@@ -514,7 +514,7 @@ function main() {
 
 # run
 main "$@";
-if [ "$?" -gt 0 ]; then exit "$?"; fi;
+if [ "$?" -ne 0 ]; then exit "$?"; fi;
 
 # tidy login page, if any
 if [[ -f "$FORM" ]]; then rm "$FORM"; fi;
