@@ -348,29 +348,31 @@ function download_site() {
 }
 
 
-function check_site_for_HTTP_errors() {
-	if [ $DEBUG_LEVEL -ge "$INFO" ]; then echo "site-checker::check_site_for_HTTP_errors"; fi;
+function fettle_log_file() {
+	cp $LOG_FILE $LOG_FILE.bak;
 
-	local TMP_FILE="$REPORT_FILE.tmp";
-
-	# output [45]xx errors to tmp file
-	grep -B 2 'awaiting response... [45]' $LOG_FILE > $TMP_FILE;
-	if [ "$?" -gt 0 ]; then return "$?"; fi;
+	echo "Fettling log file...";
 
 	# strip lines
-	sed -i "s|Reusing existing connection to [^:]*:80\.||" $TMP_FILE ;
+	sed -i "s|Reusing existing connection to [^:]*:80\.||" $LOG_FILE ;
 
 	# strip times
-	sed -i "s|--[^h]*||" $TMP_FILE ;
+	sed -i "s|--[^h]*||" $LOG_FILE ;
 
 	# strip text before error
-	sed -i "s|HTTP request sent, awaiting response... ||" $TMP_FILE ;
+	sed -i "s|HTTP request sent, awaiting response... ||" $LOG_FILE ;
 
 	# strip empty lines
-	sed -i 'n;d' $TMP_FILE ;
+	sed -i 'n;d' $LOG_FILE ;
 
 	# add empty line after error
-	sed -i '/^[0-9]/G' $TMP_FILE ;
+	sed -i '/^[0-9]/G' $LOG_FILE ;
+
+
+	echo "...done";
+
+	return 0;
+}
 
 
 	# rename, delete
@@ -469,7 +471,7 @@ function main() {
 		download_site ;
 		if [ "$?" -ne 0 ]; then return "$?"; fi;
 
-		fettle_log
+		fettle_log_file
 		if [ "$?" -ne 0 ]; then return "$?"; fi;
 
 
