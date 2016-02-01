@@ -382,6 +382,29 @@ function check_site_for_PHP_errors() {
 }
 
 
+function seconds2time () {
+	if [ $# -ne 1 ]; then
+		echoerr "Usage: seconds2time {seconds}";
+		return 1;
+	fi;
+
+	T=$1
+	D=$((T/60/60/24))
+	H=$((T/60/60%24))
+	M=$((T/60%60))
+	S=$((T%60))
+
+
+	if [ $D -eq 0 ]; then
+		printf '%02d:%02d:%02d' $H $M $S
+		return 0;
+	fi
+	printf '%d days %02d:%02d:%02d' $D $H $M $S;
+
+	return 0;
+}
+
+
 function main() {
 	local status;
 	local is_okay;
