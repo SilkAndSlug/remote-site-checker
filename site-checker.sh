@@ -67,52 +67,6 @@ USERNAME="";
 # functions
 #####
 
-function main() {
-	local status;
-
-
-	init "$@";
-	status=$?;
-	if [ "$?" -gt 0 ]; then return "$?"; fi;
-
-
-	if [ false == $REPORT_ONLY ]; then
-		login ;
-		if [ "$?" -gt 0 ]; then return "$?"; fi;
-
-
-		download_site ;
-		if [ "$?" -gt 0 ]; then return "$?"; fi;
-
-
-		check_site_for_HTTP_errors ;
-		if [ "$?" -gt 0 ]; then return "$?"; fi;
-
-
-		check_site_for_PHP_errors ;
-		if [ "$?" -gt 0 ]; then return "$?"; fi;
-	fi;
-
-
-	local ERROR_COUNT=$(( `cat $REPORT_FILE | wc -l` / 3 ));
-	if [ 0 -lt $ERROR_COUNT ]; then
-		echo "Found $ERROR_COUNT errors";
-
-		if [ false == $IS_CRONJOB ]; then
-			read -n1 -r -p "Press space to continue..." key ;
-		fi;
-
-		cat "$REPORT_FILE" ;
-		if [ "$?" -gt 0 ]; then return "$?"; fi;
-	fi;
-
-
-
-
-	return 0;
-}
-
-
 function echo_usage() {
 	echo "$0 [OPTIONS] TARGET";
 	echo "";
@@ -427,6 +381,60 @@ function check_site_for_PHP_errors() {
 	return 0;
 }
 
+
+function main() {
+	local status;
+	local is_okay;
+
+
+	init "$@";
+	status=$?;
+	if [ "$?" -ne 0 ]; then return "$?"; fi;
+
+
+	is_okay=true;
+	if [ false == $REPORT_ONLY ]; then
+		login ;
+		if [ "$?" -ne 0 ]; then return "$?"; fi;
+
+		download_site ;
+		if [ "$?" -ne 0 ]; then return "$?"; fi;
+
+		fettle_log
+		if [ "$?" -ne 0 ]; then return "$?"; fi;
+
+
+		# empty report
+		if [[ -f "$REPORT_FILE" ]]; then rm "$REPORT_FILE"; fi;
+
+		check_for_HTTP_errors ;
+		if [ "$?" -ne 0 ]; then is_okay=false; fi;
+
+		check_for_PHP_errors ;
+		if [ "$?" -ne 0 ]; then is_okay=false; fi;
+
+		check_for_PHPTAL_errors ;
+		if [ "$?" -ne 0 ]; then is_okay=false; fi;
+	fi;
+
+
+	if [ false = "$is_okay" ]; then
+		local ERROR_COUNT=$(( `cat $REPORT_FILE | wc -l` / 3 ));
+		echo "Found $ERROR_COUNT errors";
+
+		if [ false == $IS_CRONJOB ]; then
+			read -n1 -r -p "Press space to continue..." key ;
+		fi;
+
+		cat "$REPORT_FILE" ;
+		if [ "$?" -ne 0 ]; then return "$?"; fi;
+
+		return 1;
+	fi;
+
+
+	return 0;
+}
 
 
 #####
