@@ -307,8 +307,6 @@ function download_site() {
 
 
 	echo "Downloading site..."
-	# empty report
-	if [[ -f "$REPORT_FILE" ]]; then rm "$REPORT_FILE"; fi;
 
 
 	local COOKIES="--keep-session-cookies --load-cookies $COOKIE_FILE";
@@ -375,10 +373,31 @@ function fettle_log_file() {
 }
 
 
-	# rename, delete
-	mv $TMP_FILE $REPORT_FILE;
-	if [[ -f "$TMP_FILE" ]]; then rm "$TMP_FILE"; fi;
+function check_for_HTTP_errors() {
+	if [ $DEBUG_LEVEL -ge "$INFO" ]; then echo "site-checker::check_for_HTTP_errors"; fi;
 
+
+	echo "Checking for HTTP errors...";
+
+
+	# output [45]xx errors to tmp file
+	grep -B 2 'awaiting response... [45]' $LOG_FILE >> $REPORT_FILE;
+	local status=$?;
+
+	# grep exits 0 if found
+	if [ "$status" -eq 0 ]; then 
+		echoerr "Found 45x errors; quitting";
+		return 1; 
+	fi;
+
+	# grep exits 1 if not found
+	if [ "$status" -ne 1 ]; then 
+		echoerr "Couldn't check for HTTP errors; quitting";
+		return 1; 
+	fi;
+
+
+	echo "...okay";
 
 	return 0;
 }
