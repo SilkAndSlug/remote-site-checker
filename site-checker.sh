@@ -117,6 +117,8 @@ function init() {
 
 function read_config_from_file() {
 
+	echo "Reading config from file...";
+
 	# handle params
 	while [[ $# > 1 ]]; do
 		key="$1"
@@ -135,16 +137,18 @@ function read_config_from_file() {
 
 	# if TARGET missing or empty, return
 	if [[ "" = "$CONFIG_FILE" ]]; then
+		echo "No config file selected; skipping";
 		return 0;
 	fi;
 
 	if [[ ! -f "$CONFIG_FILE" ]]; then
-		echo "File $CONFIG_FILE doesn't exist";
+		echoerr "File $CONFIG_FILE doesn't exist";
 		return 1;
 	fi;
 
 
 	source "$CONFIG_FILE";
+	echo "...okay";
 
 
 	return 0;
@@ -152,6 +156,8 @@ function read_config_from_file() {
 
 
 function read_config_from_command_line() {
+
+	echo "Reading config from command line...";
 
 
 	# handle params
@@ -210,6 +216,7 @@ function read_config_from_command_line() {
 	if [ "$DEBUG_LEVEL" -ge "$DEBUG" ]; then echo "USERNAME = $USERNAME"; fi;
 
 
+	echo "...okay";
 	return 0;
 }
 
@@ -222,6 +229,7 @@ function read_target_from_command_line() {
 
 	# if TARGET missing or empty, exit
 	if [[ "" = "$TARGET" ]]; then
+		echoerr "No target given";
 		echo_usage;
 		return 1;
 	fi;
@@ -269,6 +277,9 @@ function login() {
 	if [ $DEBUG_LEVEL -ge "$INFO" ]; then echo "site-checker::login"; fi;
 
 
+	echo "Logging-in...";
+
+
 	local VERBOSITY="-q";
 	if [ $DEBUG_LEVEL -ge "$INFO" ]; then VERBOSITY="-vvv"; fi;
 
@@ -280,9 +291,13 @@ function login() {
 	if [ $DEBUG_LEVEL -ge "$DEBUG" ]; then echo "login: $COMMAND"; fi;
 
 	$COMMAND;
-	if [ "$?" -gt 0 ]; then return $?; fi;
+	if [ "$?" -ne 0 ]; then 
+		echoerr "Failed to login to $FORM as $USERNAME";
+		return 1;
+	fi;
 
 
+	echo "...okay";
 	return 0;
 }
 
@@ -291,6 +306,7 @@ function download_site() {
 	if [ $DEBUG_LEVEL -ge "$INFO" ]; then echo "site-checker::download_site"; fi;
 
 
+	echo "Downloading site..."
 	# empty report
 	if [[ -f "$REPORT_FILE" ]]; then rm "$REPORT_FILE"; fi;
 
@@ -313,12 +329,21 @@ function download_site() {
 
 
 	# -nd is a workaround for wget's 'pathconf: not a directory' error/bug
-	local COMMAND="wget --no-directories $exclude_clause $HTTP_LOGIN $COOKIES $LOG $MIRROR $WAIT --directory-prefix $SITES_DIR $TARGET";
+	local COMMAND="wget --no-directories $exclude_clause $HTTP_LOGIN $COOKIES $LOG $MIRROR $WAIT --directory-prefix $SITES_DIR $TARGET 1>/dev/null";
 	if [ $DEBUG_LEVEL -ge "$DEBUG" ]; then echo "download_site: $COMMAND"; fi;
 
-	$COMMAND;
-	if [ "$?" -gt 0 ]; then return "$?"; fi;
 
+	SECONDS=0;	# built-in var
+	$COMMAND;
+	if [ "$?" -ne 0 ]; then
+		tmp=$(seconds2time $SECONDS);
+		echoerr "Failed to download site after $tmp";
+		return 1;
+	fi;
+
+
+	tmp=$(seconds2time $SECONDS);
+	echo "...okay in $tmp";
 	return 0;
 }
 
