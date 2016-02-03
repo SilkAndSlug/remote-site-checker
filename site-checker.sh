@@ -59,7 +59,8 @@ LOG_FILE="";
 PASSWORD="";
 IS_CRONJOB=false;
 REPORT_FILE="";
-REPORT_ONLY=false;
+DO_DOWNLOAD=true;
+DO_CHECKING=true;
 SITE_DIR="";
 TARGET="";
 USERNAME="";
@@ -83,7 +84,8 @@ function echo_usage() {
 	echo "--http-password		HTTP-login for TARGET";
 	echo "-p|--password		Password for login form";
 	echo "-X|--exclude-directories		Comma-separated(?) list of /directories/ to NOT crawl";
-	echo "-ro|--report-only		Don't crawl site; report on previous crawls"
+	echo "-nc|--no-checking		Don't refresh the report; output previous report"
+	echo "-nd|--no-download		Don't refresh the download; check previous downloads"
 	echo "-v increase verbosity (-v = info; -vv = verbose; -vvv = debug)";
 	echo "";
 	echo "Returns 1 on error, and 0 on success";
@@ -192,8 +194,12 @@ function read_config_from_command_line() {
 				shift;	# past argument
 				;;
 
-			-ro|--report-only )
-				REPORT_ONLY=true;
+			-nc|--no-checking )
+				DO_CHECKING=false;
+				;;
+
+			-nd|--no-download )
+				DO_DOWNLOAD=false;
 				;;
 
 			-u|--user )
@@ -495,8 +501,7 @@ function main() {
 	if [ "$?" -ne 0 ]; then return "$?"; fi;
 
 
-	is_okay=true;
-	if [ false == $REPORT_ONLY ]; then
+	if [ true == $DO_DOWNLOAD ]; then
 		login ;
 		if [ "$?" -ne 0 ]; then return "$?"; fi;
 
@@ -505,8 +510,11 @@ function main() {
 
 		fettle_log_file
 		if [ "$?" -ne 0 ]; then return "$?"; fi;
+	fi;
 
 
+	is_okay=true;
+	if [ true == $DO_CHECKING ]; then
 		# empty report
 		if [[ -f "$REPORT_FILE" ]]; then rm "$REPORT_FILE"; fi;
 
