@@ -338,7 +338,7 @@ function download_site() {
 
 
 	# -nd is a workaround for wget's 'pathconf: not a directory' error/bug
-	local COMMAND="wget --no-directories $exclude_clause $HTTP_LOGIN $COOKIES $LOG $MIRROR $WAIT --directory-prefix $SITES_DIR $TARGET 1>/dev/null";
+	local COMMAND="wget --no-check-certificate --no-directories $exclude_clause $HTTP_LOGIN $COOKIES $LOG $MIRROR $WAIT --directory-prefix $SITE_DIR $TARGET";
 	if [ $DEBUG_LEVEL -ge "$DEBUG" ]; then echo "download_site: $COMMAND"; fi;
 
 
