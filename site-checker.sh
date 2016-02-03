@@ -104,10 +104,10 @@ function init() {
 	local status ;
 
 	read_config_from_file "$@";
-	if [ "$?" -ne 0 ]; then return $?; fi;
+	if [ "$?" -ne 0 ]; then return 1; fi;
 
 	read_config_from_command_line "$@";
-	if [ "$?" -ne 0 ]; then return $?; fi;
+	if [ "$?" -ne 0 ]; then return 1; fi;
 
 	# if TARGET missing or empty, exit
 	if [[ "" = "$TARGET" ]]; then
@@ -117,13 +117,13 @@ function init() {
 	fi;
 
 	extract_domain_from_target ;
-	if [ "$?" -ne 0 ]; then return $?; fi;
+	if [ "$?" -ne 0 ]; then return 1; fi;
 
 	update_internal_vars_with_config ;
-	if [ "$?" -ne 0 ]; then return $?; fi;
+	if [ "$?" -ne 0 ]; then return 1; fi;
 
 	init_dirs ;
-	if [ "$?" -ne 0 ]; then return $?; fi;
+	if [ "$?" -ne 0 ]; then return 1; fi;
 
 
 	return 0;
@@ -493,28 +493,23 @@ function seconds2time () {
 
 
 function main() {
-	local status;
-	local is_okay;
-
-
 	init "$@";
-	status=$?;
-	if [ "$?" -ne 0 ]; then return "$?"; fi;
+	if [ "$?" -ne 0 ]; then return 1; fi;
 
 
 	if [ true == $DO_DOWNLOAD ]; then
 		login ;
-		if [ "$?" -ne 0 ]; then return "$?"; fi;
+		if [ "$?" -ne 0 ]; then return 1; fi;
 
 		download_site ;
-		if [ "$?" -ne 0 ]; then return "$?"; fi;
+		if [ "$?" -ne 0 ]; then return 1; fi;
 
 		fettle_log_file
-		if [ "$?" -ne 0 ]; then return "$?"; fi;
+		if [ "$?" -ne 0 ]; then return 1; fi;
 	fi;
 
 
-	is_okay=true;
+	local is_okay=true;
 	if [ true == $DO_CHECKING ]; then
 		# empty report
 		if [[ -f "$REPORT_FILE" ]]; then rm "$REPORT_FILE"; fi;
@@ -539,7 +534,7 @@ function main() {
 		fi;
 
 		cat "$REPORT_FILE" ;
-		if [ "$?" -ne 0 ]; then return "$?"; fi;
+		if [ "$?" -ne 0 ]; then return 1; fi;
 
 		return 1;
 	fi;
