@@ -316,8 +316,9 @@ function download_site() {
 	if [ $DEBUG_LEVEL -ge "$INFO" ]; then echo "site-checker::download_site"; fi;
 
 
-	echo "Downloading site..."
+	echo "Downloading site (this will take a while)..."
 
+	rm -rf $SITE_DIR;
 
 	local COOKIES="--keep-session-cookies --load-cookies $COOKIE_FILE";
 	local LOG="--output-file $LOG_FILE";
