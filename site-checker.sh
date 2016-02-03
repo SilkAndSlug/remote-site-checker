@@ -72,7 +72,7 @@ USERNAME="";
 #####
 
 function echo_usage() {
-	echo "$0 [OPTIONS] TARGET";
+	echo "Usage: `basename $0` [OPTIONS] [TARGET]";
 	echo "";
 	echo "TARGET should be a URL, including protocol";
 	echo "";
@@ -95,6 +95,12 @@ function echo_usage() {
 
 
 function init() {
+	if [ $# -eq 0 ]; then
+		echo_usage;
+		return 1;
+	fi;
+
+
 	local status ;
 
 	read_config_from_file "$@";
@@ -103,8 +109,12 @@ function init() {
 	read_config_from_command_line "$@";
 	if [ "$?" -ne 0 ]; then return $?; fi;
 
-	read_target_from_command_line "$@";
-	if [ "$?" -ne 0 ]; then return $?; fi;
+	# if TARGET missing or empty, exit
+	if [[ "" = "$TARGET" ]]; then
+		echoerr "No target given";
+		echo_usage;
+		return 1;
+	fi;
 
 	extract_domain_from_target ;
 	if [ "$?" -ne 0 ]; then return $?; fi;
@@ -125,7 +135,7 @@ function read_config_from_file() {
 	echo "Reading config from file...";
 
 	# handle params
-	while [[ $# > 1 ]]; do
+	while [[ $# > 0 ]]; do
 		key="$1"
 
 		case $key in
@@ -140,7 +150,7 @@ function read_config_from_file() {
 	if [ "$DEBUG_LEVEL" -ge "$DEBUG" ]; then echo "CONFIG_FILE = $CONFIG_FILE"; fi;
 
 
-	# if TARGET missing or empty, return
+	# if CONFIG_FILE missing or empty, return
 	if [[ "" = "$CONFIG_FILE" ]]; then
 		echo "No config file selected; skipping";
 		return 0;
@@ -166,10 +176,16 @@ function read_config_from_command_line() {
 
 
 	# handle params
-	while [[ $# > 1 ]]; do
+	while [[ $# > 0 ]]; do
 		key="$1"
+		echo $key;
 
 		case $key in
+			-c|configuration )
+				# config file; skip
+				shift;	# past argument
+				;;
+
 			-cj|--cronjob )
 				IS_CRONJOB=true;
 				;;
@@ -216,6 +232,10 @@ function read_config_from_command_line() {
 				EXCLUDE_DIRS="$2";
 				shift;	# past argument
 				;;
+
+			* )
+				TARGET=$key;
+				;;
 		esac
 		shift # past argument
 	done
@@ -224,26 +244,7 @@ function read_config_from_command_line() {
 	if [ "$DEBUG_LEVEL" -ge "$DEBUG" ]; then echo "PASSWORD = $PASSWORD"; fi;
 	if [ "$DEBUG_LEVEL" -ge "$DEBUG" ]; then echo "USERNAME = $USERNAME"; fi;
 
-
 	echo "...okay";
-	return 0;
-}
-
-
-function read_target_from_command_line() {
-
-	TARGET=${!#};
-	if [ "$DEBUG_LEVEL" -ge "$DEBUG" ]; then echo "TARGET = $TARGET"; fi;
-
-
-	# if TARGET missing or empty, exit
-	if [[ "" = "$TARGET" ]]; then
-		echoerr "No target given";
-		echo_usage;
-		return 1;
-	fi;
-
-
 	return 0;
 }
 
