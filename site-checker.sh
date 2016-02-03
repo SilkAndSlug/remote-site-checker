@@ -178,7 +178,6 @@ function read_config_from_command_line() {
 	# handle params
 	while [[ $# > 0 ]]; do
 		key="$1"
-		echo $key;
 
 		case $key in
 			-c|configuration )
