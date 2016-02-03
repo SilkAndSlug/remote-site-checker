@@ -416,7 +416,7 @@ function check_for_HTTP_errors() {
 function check_for_PHP_errors() {
 	if [ $DEBUG_LEVEL -ge "$INFO" ]; then echo "site-checker::check_for_PHP_errors"; fi;
 
-	echo "Testing site for PHP errors..."
+	echo "Checking for PHP errors..."
 
 	is_okay=true;
 
@@ -449,7 +449,7 @@ function check_for_PHP_errors() {
 function check_for_PHPTAL_errors() {
 	if [ $DEBUG_LEVEL -ge "$INFO" ]; then echo "site-checker::check_for_PHPTAL_errors"; fi;
 
-	echo "Testing site for PHPTAL errors..."
+	echo "Checking for PHPTAL error-strings..."
 
 	is_okay=true;
 
@@ -458,7 +458,7 @@ function check_for_PHPTAL_errors() {
 
 
 	if [ false = "$is_okay" ]; then
-		echoerr "Found PHPTAL errors; quitting";
+		echoerr "Found PHPTAL error-strings; quitting";
 		return 1;
 	fi;
 
