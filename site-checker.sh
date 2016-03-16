@@ -26,7 +26,7 @@ SITES_DIR="$TMP_DIR/sites";
 
 
 # recursive, 2 prior lines, ignore Silk-Framework, images, etc
-GREP_PARAMS="-B 2 --exclude-dir=vendors/ --exclude-dir=silk/ --exclude-dir=data/ --exclude-dir=images/ --exclude=*.jpg -r";
+GREP_PARAMS=(-B 2 --exclude-dir=vendors/ --exclude-dir=silk/ --exclude-dir=data/ --exclude-dir=images/ --exclude=*.jpg -r);
 
 
 #####
@@ -72,7 +72,7 @@ USERNAME="";
 #####
 
 function echo_usage() {
-	echo "Usage: `basename $0` [OPTIONS] [TARGET]";
+	echo "Usage: 'basename $0' [OPTIONS] [TARGET]";
 	echo "";
 	echo "TARGET should be a URL, including protocol";
 	echo "";
@@ -104,26 +104,26 @@ function init() {
 	local status ;
 
 	read_config_from_file "$@";
-	if [ "$?" -ne 0 ]; then return 1; fi;
+	if [ 0 -ne "$?" ]; then return 1; fi;
 
 	read_config_from_command_line "$@";
-	if [ "$?" -ne 0 ]; then return 1; fi;
+	if [ 0 -ne "$?" ]; then return 1; fi;
 
 	# if TARGET missing or empty, exit
-	if [[ "" = "$TARGET" ]]; then
+	if [[ "" == "$TARGET" ]]; then
 		echoerr "No target given";
 		echo_usage;
 		return 1;
 	fi;
 
 	extract_domain_from_target ;
-	if [ "$?" -ne 0 ]; then return 1; fi;
+	if [ 0 -ne "$?" ]; then return 1; fi;
 
 	update_internal_vars_with_config ;
-	if [ "$?" -ne 0 ]; then return 1; fi;
+	if [ 0 -ne "$?" ]; then return 1; fi;
 
 	init_dirs ;
-	if [ "$?" -ne 0 ]; then return 1; fi;
+	if [ 0 -ne "$?" ]; then return 1; fi;
 
 
 	return 0;
@@ -135,7 +135,7 @@ function read_config_from_file() {
 	echo "Reading config from file...";
 
 	# handle params
-	while [[ $# > 0 ]]; do
+	while [[ $# -gt 0 ]]; do
 		key="$1"
 
 		case $key in
@@ -176,7 +176,7 @@ function read_config_from_command_line() {
 
 
 	# handle params
-	while [[ $# > 0 ]]; do
+	while [[ $# -gt 0 ]]; do
 		key="$1"
 
 		case $key in
@@ -224,7 +224,7 @@ function read_config_from_command_line() {
 
 			-v|--verbose )
 				# debugging++
-				DEBUG_LEVEL=$(($DEBUG_LEVEL+1));
+				DEBUG_LEVEL=$((DEBUG_LEVEL+1));
 				;;
 
 			-X|--exclude-directories )
@@ -250,7 +250,7 @@ function read_config_from_command_line() {
 
 function extract_domain_from_target() {
 	# extract DOMAIN from TARGET
-	DOMAIN=`echo $TARGET | awk -F/ '{print $3}'`;
+	DOMAIN=$(echo "$TARGET" | awk -F/ '{print $3}');
 	if [ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ]; then echo "DOMAIN = $DOMAIN"; fi;
 
 	return 0;
@@ -272,11 +272,11 @@ function update_internal_vars_with_config() {
 
 
 function init_dirs() {
-	mkdir -p $SITE_DIR ;
+	mkdir -p "$SITE_DIR" ;
 
-	mkdir -p $COOKIES_DIR ;
-	mkdir -p $LOGS_DIR ;
-	mkdir -p $REPORTS_DIR ;
+	mkdir -p "$COOKIES_DIR" ;
+	mkdir -p "$LOGS_DIR" ;
+	mkdir -p "$REPORTS_DIR" ;
 
 	return 0;
 }
@@ -300,7 +300,7 @@ function login() {
 	if [ "$DEBUG_LEVEL" -ge "$DEBUG_VERBOSE" ]; then echo "login: $COMMAND"; fi;
 
 	$COMMAND;
-	if [ "$?" -ne 0 ]; then 
+	if [ 0 -ne "$?" ]; then 
 		echoerr "Failed to login to $FORM as $USERNAME";
 		return 1;
 	fi;
@@ -317,21 +317,21 @@ function download_site() {
 
 	echo "Downloading site (this will take a while)..."
 
-	rm -rf $SITE_DIR;
+	rm -rf "$SITE_DIR";
 
 	local COOKIES="--keep-session-cookies --load-cookies $COOKIE_FILE";
 	local LOG="--output-file $LOG_FILE";
 	local MIRROR="--mirror -e robots=off --page-requisites --no-parent";
 
 	local exclude_clause="";
-	if [ ! -z $EXCLUDE_DIRS ]; then
+	if [ ! -z "$EXCLUDE_DIRS" ]; then
 		local exclude_clause="--exclude-directories=$EXCLUDE_DIRS";
 	fi;
 
 
 	# wait 1sec, unless we're hitting the DEV server
 	local WAIT="--wait 1";
-	if [ "dev.silkandslug.com" == $(echo $DOMAIN,,) ]; then
+	if [ 'dev.silkandslug.com' == "${DOMAIN,,}" ]; then
 		WAIT="";
 	fi;
 
@@ -344,37 +344,37 @@ function download_site() {
 	SECONDS=0;	# built-in var
 	$COMMAND;
 	if [ "$?" -ne 0 ]; then
-		tmp=$(seconds2time $SECONDS);
 		echoerr "Failed to download site after $tmp";
+		tmp=$(seconds2time "$SECONDS");
 		return 1;
 	fi;
 
 
-	tmp=$(seconds2time $SECONDS);
+	tmp=$(seconds2time "$SECONDS");
 	echo "...okay in $tmp";
 	return 0;
 }
 
 
 function fettle_log_file() {
-	cp $LOG_FILE $LOG_FILE.bak;
+	cp "$LOG_FILE" "$LOG_FILE.bak";
 
 	echo "Fettling log file...";
 
 	# strip lines
-	sed -i "s|Reusing existing connection to [^:]*:80\.||" $LOG_FILE ;
+	sed -i "s|Reusing existing connection to [^:]*:80\.||" "$LOG_FILE" ;
 
 	# strip times
-	sed -i "s|--[^h]*||" $LOG_FILE ;
+	sed -i "s|--[^h]*||" "$LOG_FILE" ;
 
 	# strip text before error
-	sed -i "s|HTTP request sent, awaiting response... ||" $LOG_FILE ;
+	sed -i "s|HTTP request sent, awaiting response... ||" "$LOG_FILE" ;
 
 	# strip empty lines
-	sed -i 'n;d' $LOG_FILE ;
+	sed -i 'n;d' "$LOG_FILE" ;
 
 	# add empty line after error
-	sed -i '/^[0-9]/G' $LOG_FILE ;
+	sed -i '/^[0-9]/G' "$LOG_FILE" ;
 
 
 	echo "...done";
@@ -391,13 +391,13 @@ function check_for_HTTP_errors() {
 
 
 	# output [45]xx errors to tmp file
-	grep -B 2 'awaiting response... [45]' $LOG_FILE >> $REPORT_FILE;
+	grep -B 2 'awaiting response... [45]' "$LOG_FILE" >> "$REPORT_FILE" 2>&1;
 	local status=$?;
 
 	# grep exits 0 if found
 	if [ "$status" -eq 0 ]; then 
 		echoerr "Found 45x errors; quitting";
-		return 1; 
+		return 2; 
 	fi;
 
 	# grep exits 1 if not found
@@ -418,25 +418,25 @@ function check_for_PHP_errors() {
 
 	echo "Checking for PHP errors..."
 
-	is_okay=true;
+	local is_okay=true;
 
 	# grep returns 1 if nothing found
-	grep $GREP_PARAMS '^Fatal error: ' "$SITE_DIR" >> "$REPORT_FILE";
+	grep "${GREP_PARAMS[@]}" '^Fatal error: ' "$SITE_DIR" >> "$REPORT_FILE";
 	if [ "$?" -ne 1 ]; then is_okay=false; fi;
 
-	grep $GREP_PARAMS '^Warning: ' "$SITE_DIR" >> "$REPORT_FILE";
+	grep "${GREP_PARAMS[@]}" '^Warning: ' "$SITE_DIR" >> "$REPORT_FILE";
 	if [ "$?" -ne 1 ]; then is_okay=false; fi;
 
-	grep $GREP_PARAMS '^Notice: ' "$SITE_DIR" >> "$REPORT_FILE";
+	grep "${GREP_PARAMS[@]}" '^Notice: ' "$SITE_DIR" >> "$REPORT_FILE";
 	if [ "$?" -ne 1 ]; then is_okay=false; fi;
 
-	grep $GREP_PARAMS '^Strict Standards: ' "$SITE_DIR" >> "$REPORT_FILE";
+	grep "${GREP_PARAMS[@]}" '^Strict Standards: ' "$SITE_DIR" >> "$REPORT_FILE";
 	if [ "$?" -ne 1 ]; then is_okay=false; fi;
 
 
-	if [ false = "$is_okay" ]; then
+	if [ false == "$is_okay" ]; then
 		echoerr "Found PHP errors; quitting";
-		return 1;
+		return 2;
 	fi;
 
 
@@ -451,15 +451,15 @@ function check_for_PHPTAL_errors() {
 
 	echo "Checking for PHPTAL error-strings..."
 
-	is_okay=true;
+	local is_okay=true;
 
-	grep $GREP_PARAMS 'Error: ' "$SITE_DIR" >> "$REPORT_FILE";
-	if [ "$?" -ne 1 ]; then is_okay=false; fi;
+	grep "${GREP_PARAMS[@]}" 'Error: ' "$SITE_DIR" >> "$REPORT_FILE";
+	if [ 1 -ne "$?" ]; then is_okay=false; fi;
 
 
-	if [ false = "$is_okay" ]; then
+	if [ false == "$is_okay" ]; then
 		echoerr "Found PHPTAL error-strings; quitting";
-		return 1;
+		return 2;
 	fi;
 
 
@@ -494,47 +494,47 @@ function seconds2time () {
 
 function main() {
 	init "$@";
-	if [ "$?" -ne 0 ]; then return 1; fi;
+	if [ 0 -ne "$?" ]; then return 1; fi;
 
 
 	if [ true == $DO_DOWNLOAD ]; then
 		login ;
-		if [ "$?" -ne 0 ]; then return 1; fi;
+		if [ 0 -ne "$?" ]; then return 1; fi;
 
 		download_site ;
-		if [ "$?" -ne 0 ]; then return 1; fi;
+		if [ 0 -ne "$?" ]; then return 1; fi;
 
 		fettle_log_file
-		if [ "$?" -ne 0 ]; then return 1; fi;
+		if [ 0 -ne "$?" ]; then return 1; fi;
 	fi;
 
 
 	local is_okay=true;
-	if [ true == $DO_CHECKING ]; then
+	local status;
+	if [ true == "$DO_CHECKING" ]; then
 		# empty report
 		if [[ -f "$REPORT_FILE" ]]; then rm "$REPORT_FILE"; fi;
 
 		check_for_HTTP_errors ;
-		if [ "$?" -ne 0 ]; then is_okay=false; fi;
+		if [ 0 -ne "$?" ]; then is_okay=false; fi;
 
 		check_for_PHP_errors ;
-		if [ "$?" -ne 0 ]; then is_okay=false; fi;
+		if [ 0 -ne "$?" ]; then is_okay=false; fi;
 
 		check_for_PHPTAL_errors ;
-		if [ "$?" -ne 0 ]; then is_okay=false; fi;
+		if [ 0 -ne "$?" ]; then is_okay=false; fi;
 	fi;
 
-
-	if [ false = "$is_okay" ]; then
-		local ERROR_COUNT=$(( `cat $REPORT_FILE | wc -l` / 3 ));
-		echo "Found $ERROR_COUNT errors";
+	if [ false == "$is_okay" ]; then
+		local ERROR_COUNT=$(( $(wc -l < "$REPORT_FILE") / 3 ));
+		echoerr "Found $ERROR_COUNT errors";
 
 		if [ false == $IS_CRONJOB ]; then
 			read -n1 -r -p "Press space to continue..." key ;
 		fi;
 
 		cat "$REPORT_FILE" ;
-		if [ "$?" -ne 0 ]; then return 1; fi;
+		if [ 0 -ne "$?" ]; then return 1; fi;
 
 		return 1;
 	fi;
@@ -544,16 +544,17 @@ function main() {
 }
 
 
+
 #####
 # run, tidy, quit
 #####
 
 # run
 main "$@";
-if [ "$?" -ne 0 ]; then exit $?; fi;
+if [ 1 -ne "$?" ]; then exit 1; fi;
 
 # tidy login page, if any
-if [[ -f "$FORM" ]]; then rm "$FORM"; fi;
+if [ -f "$FORM" ]; then rm "$FORM"; fi;
 
 # exit
 exit 0;
