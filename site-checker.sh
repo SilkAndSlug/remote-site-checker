@@ -3,6 +3,8 @@
 ## Crawls the given URL, checking for wget errors (e.g. HTTP 404) and PHP
 ## errors (e.g. FATAL)
 
+## @todo		get signed cert for dev.silkandslug.com; remove --no-check-certificate
+
 
 
 #####
@@ -301,7 +303,8 @@ function login() {
 
 	local LOGIN="--post-data username=$USERNAME&password=$PASSWORD --delete-after";
 
-	local COMMAND="wget $VERBOSITY $HTTP_LOGIN $COOKIES $LOGIN $TARGET/$FORM";
+	# --no-check-certificate is a workaround for the self-cert on dev.SilkAndSlug.com
+	local COMMAND="wget $VERBOSITY --no-check-certificate $HTTP_LOGIN $COOKIES $LOGIN $TARGET/$FORM";
 	if [ "$DEBUG_LEVEL" -ge "$DEBUG_VERBOSE" ]; then echo "login: $COMMAND"; fi;
 
 	$COMMAND;
@@ -342,7 +345,8 @@ function download_site() {
 
 
 	# -nd is a workaround for wget's 'pathconf: not a directory' error/bug
-	local COMMAND="wget --no-check-certificate --no-directories $exclude_clause $HTTP_LOGIN $COOKIES $LOG $MIRROR $WAIT --directory-prefix $SITE_DIR $TARGET";
+	# --no-check-certificate is a workaround for the self-cert on dev.SilkAndSlug.com
+	local COMMAND="wget --content-on-error --no-directories --no-check-certificate $exclude_clause $HTTP_LOGIN $COOKIES $LOG $MIRROR $WAIT --directory-prefix $SITE_DIR $TARGET";
 	if [ "$DEBUG_LEVEL" -ge "$DEBUG_VERBOSE" ]; then echo "download_site: $COMMAND"; fi;
 
 
