@@ -34,10 +34,10 @@ GREP_PARAMS="-B 2 --exclude-dir=vendors/ --exclude-dir=silk/ --exclude-dir=data/
 #####
 
 # debug levels
-QUIET=0;
-INFO=1;
-VERBOSE=2;
-DEBUG=3;
+DEBUG_QUIET=0;
+DEBUG_INFO=1;
+DEBUG_VERBOSE=2;
+DEBUG_DEBUG=3;
 
 
 
@@ -45,7 +45,7 @@ DEBUG=3;
 # internal vars
 #####
 
-DEBUG_LEVEL=$QUIET;
+DEBUG_LEVEL="$DEBUG_QUIET";
 
 COOKIE_FILE="";
 CONFIG_FILE="";
@@ -147,7 +147,7 @@ function read_config_from_file() {
 		esac
 		shift # past argument
 	done
-	if [ "$DEBUG_LEVEL" -ge "$DEBUG" ]; then echo "CONFIG_FILE = $CONFIG_FILE"; fi;
+	if [ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ]; then echo "CONFIG_FILE = $CONFIG_FILE"; fi;
 
 
 	# if CONFIG_FILE missing or empty, return
@@ -238,10 +238,10 @@ function read_config_from_command_line() {
 		esac
 		shift # past argument
 	done
-	if [ "$DEBUG_LEVEL" -ge "$DEBUG" ]; then echo "DEBUG_LEVEL = $DEBUG_LEVEL"; fi;
-	if [ "$DEBUG_LEVEL" -ge "$DEBUG" ]; then echo "FORM = $FORM"; fi;
-	if [ "$DEBUG_LEVEL" -ge "$DEBUG" ]; then echo "PASSWORD = $PASSWORD"; fi;
-	if [ "$DEBUG_LEVEL" -ge "$DEBUG" ]; then echo "USERNAME = $USERNAME"; fi;
+	if [ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ]; then echo "DEBUG_LEVEL = $DEBUG_LEVEL"; fi;
+	if [ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ]; then echo "FORM = $FORM"; fi;
+	if [ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ]; then echo "PASSWORD = $PASSWORD"; fi;
+	if [ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ]; then echo "USERNAME = $USERNAME"; fi;
 
 	echo "...okay";
 	return 0;
@@ -251,7 +251,7 @@ function read_config_from_command_line() {
 function extract_domain_from_target() {
 	# extract DOMAIN from TARGET
 	DOMAIN=`echo $TARGET | awk -F/ '{print $3}'`;
-	if [ "$DEBUG_LEVEL" -ge "$DEBUG" ]; then echo "DOMAIN = $DOMAIN"; fi;
+	if [ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ]; then echo "DOMAIN = $DOMAIN"; fi;
 
 	return 0;
 }
@@ -283,21 +283,21 @@ function init_dirs() {
 
 
 function login() {
-	if [ $DEBUG_LEVEL -ge "$INFO" ]; then echo "site-checker::login"; fi;
+	if [ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ]; then echo "site-checker::login"; fi;
 
 
 	echo "Logging-in...";
 
 
 	local VERBOSITY="-q";
-	if [ $DEBUG_LEVEL -ge "$INFO" ]; then VERBOSITY="-vvv"; fi;
+	if [ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ]; then VERBOSITY="-vvv"; fi;
 
 	local COOKIES="--keep-session-cookies --save-cookies $COOKIE_FILE";
 
 	local LOGIN="--post-data username=$USERNAME&password=$PASSWORD --delete-after";
 
 	local COMMAND="wget $VERBOSITY $HTTP_LOGIN $COOKIES $LOGIN $TARGET/$FORM";
-	if [ $DEBUG_LEVEL -ge "$DEBUG" ]; then echo "login: $COMMAND"; fi;
+	if [ "$DEBUG_LEVEL" -ge "$DEBUG_VERBOSE" ]; then echo "login: $COMMAND"; fi;
 
 	$COMMAND;
 	if [ "$?" -ne 0 ]; then 
@@ -312,7 +312,7 @@ function login() {
 
 
 function download_site() {
-	if [ $DEBUG_LEVEL -ge "$INFO" ]; then echo "site-checker::download_site"; fi;
+	if [ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ]; then echo "site-checker::download_site"; fi;
 
 
 	echo "Downloading site (this will take a while)..."
@@ -338,7 +338,7 @@ function download_site() {
 
 	# -nd is a workaround for wget's 'pathconf: not a directory' error/bug
 	local COMMAND="wget --no-check-certificate --no-directories $exclude_clause $HTTP_LOGIN $COOKIES $LOG $MIRROR $WAIT --directory-prefix $SITE_DIR $TARGET";
-	if [ $DEBUG_LEVEL -ge "$DEBUG" ]; then echo "download_site: $COMMAND"; fi;
+	if [ "$DEBUG_LEVEL" -ge "$DEBUG_VERBOSE" ]; then echo "download_site: $COMMAND"; fi;
 
 
 	SECONDS=0;	# built-in var
@@ -384,7 +384,7 @@ function fettle_log_file() {
 
 
 function check_for_HTTP_errors() {
-	if [ $DEBUG_LEVEL -ge "$INFO" ]; then echo "site-checker::check_for_HTTP_errors"; fi;
+	if [ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ]; then echo "site-checker::check_for_HTTP_errors"; fi;
 
 
 	echo "Checking for HTTP errors...";
@@ -414,7 +414,7 @@ function check_for_HTTP_errors() {
 
 
 function check_for_PHP_errors() {
-	if [ $DEBUG_LEVEL -ge "$INFO" ]; then echo "site-checker::check_for_PHP_errors"; fi;
+	if [ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ]; then echo "site-checker::check_for_PHP_errors"; fi;
 
 	echo "Checking for PHP errors..."
 
@@ -447,7 +447,7 @@ function check_for_PHP_errors() {
 
 
 function check_for_PHPTAL_errors() {
-	if [ $DEBUG_LEVEL -ge "$INFO" ]; then echo "site-checker::check_for_PHPTAL_errors"; fi;
+	if [ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ]; then echo "site-checker::check_for_PHPTAL_errors"; fi;
 
 	echo "Checking for PHPTAL error-strings..."
 
