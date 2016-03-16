@@ -194,6 +194,11 @@ function read_config_from_command_line() {
 				shift;	# past argument
 				;;
 
+			--help )
+				echo_usage;
+				exit 1;
+				;;
+
 			--http-password )
 				HTTP_PASSWORD="$2";
 				shift;	# past argument
