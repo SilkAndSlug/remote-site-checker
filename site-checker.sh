@@ -569,7 +569,7 @@ function main() {
 
 # run
 main "$@";
-if [ 1 -ne "$?" ]; then exit 1; fi;
+if [ 0 -ne "$?" ]; then exit 1; fi;
 
 # tidy login page, if any
 if [ -f "$FORM" ]; then rm "$FORM"; fi;
