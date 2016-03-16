@@ -352,9 +352,12 @@ function download_site() {
 
 	SECONDS=0;	# built-in var
 	$COMMAND;
-	if [ "$?" -ne 0 ]; then
-		echoerr "Failed to download site after $tmp";
+	local status="$?";
+	# 8 => server error (e.g. 404) - which we ignore (for now!)
+	if [ 0 -ne "$status" ] && [ 8 -ne "$status" ]; then
 		tmp=$(seconds2time "$SECONDS");
+		echo "wget exited with code $status after $tmp" >> "$LOG_FILE";
+		echoerr "Failed to download site after $tmp. See $LOG_FILE (or call $(basename "$0") -nd) for details";
 		return 1;
 	fi;
 
