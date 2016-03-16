@@ -344,7 +344,7 @@ function download_site() {
 	fi;
 
 
-	# -nd is a workaround for wget's 'pathconf: not a directory' error/bug
+	# --no-directories is a workaround for wget's 'pathconf: not a directory' error/bug
 	# --no-check-certificate is a workaround for the self-cert on dev.SilkAndSlug.com
 	local COMMAND="wget --content-on-error --no-directories --no-check-certificate $exclude_clause $HTTP_LOGIN $COOKIES $LOG $MIRROR $WAIT --directory-prefix $SITE_DIR $TARGET";
 	if [ "$DEBUG_LEVEL" -ge "$DEBUG_VERBOSE" ]; then echo "download_site: $COMMAND"; fi;
@@ -508,6 +508,12 @@ function main() {
 	init "$@";
 	if [ 0 -ne "$?" ]; then return 1; fi;
 
+	echo "";
+	echo "";
+	echo "########";
+	echo "## Running Site-Checker on $TARGET";
+	echo "########";
+	echo "";
 
 	if [ true == $DO_DOWNLOAD ]; then
 		login ;
@@ -545,7 +551,7 @@ function main() {
 			read -n1 -r -p "Press space to continue..." key ;
 		fi;
 
-		cat "$REPORT_FILE" ;
+		cat "$REPORT_FILE";
 		if [ 0 -ne "$?" ]; then return 1; fi;
 
 		return 1;
