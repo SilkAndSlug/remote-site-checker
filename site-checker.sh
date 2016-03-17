@@ -389,19 +389,19 @@ function fettle_log_file() {
 	echo "Fettling log file...";
 
 	# strip lines
-	sed -i "s|Reusing existing connection to [^:]*:80\.||" "$LOG_FILE" ;
+	sed -i "s|Reusing existing connection to [^:]*:80\.||" "$LOG_FILE";
 
 	# strip times
-	sed -i "s|--[^h]*||" "$LOG_FILE" ;
+	sed -i "s|--[^h]*||" "$LOG_FILE";
 
 	# strip text before error
-	sed -i "s|HTTP request sent, awaiting response... ||" "$LOG_FILE" ;
+	sed -i "s|HTTP request sent, awaiting response... ||" "$LOG_FILE";
 
 	# strip empty lines
-	sed -i 'n;d' "$LOG_FILE" ;
+	sed -i 'n;d' "$LOG_FILE";
 
 	# add empty line after error
-	sed -i '/^[0-9]/G' "$LOG_FILE" ;
+	sed -i '/^[0-9]/G' "$LOG_FILE";
 
 
 	echo "...done";
