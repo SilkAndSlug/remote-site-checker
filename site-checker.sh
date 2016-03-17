@@ -345,9 +345,9 @@ function download_site() {
 		rm -rf "$OUTPUT_DIR/$SITE_DIR";
 	fi;
 
-	local COOKIES=(--keep-session-cookies --load-cookies "$COOKIE_FILE");
-	local LOG=(--output-file "$LOG_FILE");
-	local MIRROR=(--mirror -e robots=off --page-requisites --no-parent);
+	local COOKIES=(--keep-session-cookies "--load-cookies $COOKIE_FILE");
+	local LOG=("--output-file $LOG_FILE");
+	local MIRROR=(--mirror "-e robots=off" --page-requisites --no-parent);
 
 	local exclude_clause=();
 	if [ ! -z "$EXCLUDE_DIRS" ]; then
