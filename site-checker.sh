@@ -341,7 +341,9 @@ function download_site() {
 
 	echo "Downloading site (this will take a while)..."
 
-	rm -rf "$OUTPUT_DIR/$SITE_DIR";
+	if [[ "" != "$OUTPUT_DIR" ]]; then
+		rm -rf "$OUTPUT_DIR/$SITE_DIR";
+	fi;
 
 	local COOKIES=(--keep-session-cookies --load-cookies "$COOKIE_FILE");
 	local LOG=(--output-file "$LOG_FILE");
