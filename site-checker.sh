@@ -20,11 +20,11 @@ set -u;
 # config
 #####
 
-TMP_DIR="/tmp/site-checker";
-COOKIES_DIR="$TMP_DIR/cookies";
-LOGS_DIR="$TMP_DIR/logs";
-REPORTS_DIR="$TMP_DIR/reports";
-SITES_DIR="$TMP_DIR/sites";
+OUTPUT_DIR="/tmp/site-checker";
+COOKIES_DIR="cookies";
+LOGS_DIR="$OUTPUT_DIR/logs";
+REPORTS_DIR="$OUTPUT_DIR/reports";
+SITES_DIR="$OUTPUT_DIR/sites";
 
 
 # recursive, 2 prior lines, ignore Silk-Framework, images, etc
@@ -80,6 +80,7 @@ function echo_usage() {
 	echo "";
 	echo "-c|--configuration	Path to config file";
 	echo "-cj|--cronjob		Caller is a cronjob; run script non-interactively";
+	echo "-d|--dir		Directory to hold generated files; defaults to /tmp/site-checker";
 	echo "-f|--form		URL for login form, relative to TARGET; defaults to User/Login";
 	echo "-u|--user		username for login form";
 	echo "--http-username		HTTP-login for TARGET";
@@ -191,6 +192,11 @@ function read_config_from_command_line() {
 				IS_CRONJOB=true;
 				;;
 
+			-d|--dir )
+				OUTPUT_DIR="$2";
+				shift;	# past argument
+				;;
+
 			-f|--form )
 				FORM="$2";
 				shift;	# past argument
@@ -265,9 +271,9 @@ function extract_domain_from_target() {
 
 
 function update_internal_vars_with_config() {
-	COOKIE_FILE="$COOKIES_DIR/$DOMAIN.txt";
-	LOG_FILE="$LOGS_DIR/$DOMAIN.log";
-	REPORT_FILE="$REPORTS_DIR/$DOMAIN.txt";
+	COOKIE_FILE="$OUTPUT_DIR/$COOKIES_DIR/$DOMAIN.txt";
+	LOG_FILE="$OUTPUT_DIR/$LOGS_DIR/$DOMAIN.log";
+	REPORT_FILE="$OUTPUT_DIR/$REPORTS_DIR/$DOMAIN.txt";
 	SITE_DIR="$SITES_DIR/$DOMAIN";
 
 	if [[ ! -z "$HTTP_USERNAME" && ! -z "$HTTP_PASSWORD" ]]; then
@@ -279,11 +285,20 @@ function update_internal_vars_with_config() {
 
 
 function init_dirs() {
-	mkdir -p "$SITE_DIR" ;
+	mkdir -p "$OUTPUT_DIR";
+	if [ ! "0" -eq $? ]; then echoerr "Failed to find/mk $OUTPUT_DIR"; return 1; fi;
 
-	mkdir -p "$COOKIES_DIR" ;
-	mkdir -p "$LOGS_DIR" ;
-	mkdir -p "$REPORTS_DIR" ;
+	mkdir -p "$OUTPUT_DIR/$SITE_DIR";
+	if [ ! "0" -eq $? ]; then echoerr "Failed to find/mk $OUTPUT_DIR/$SITE_DIR"; return 1; fi;
+
+	mkdir -p "$OUTPUT_DIR/$COOKIES_DIR";
+	if [ ! "0" -eq $? ]; then echoerr "Failed to find/mk $OUTPUT_DIR/$COOKIES_DIR"; return 1; fi;
+
+	mkdir -p "$OUTPUT_DIR/$LOGS_DIR";
+	if [ ! "0" -eq $? ]; then echoerr "Failed to find/mk $OUTPUT_DIR/$LOGS_DIR"; return 1; fi;
+
+	mkdir -p "$OUTPUT_DIR/$REPORTS_DIR";
+	if [ ! "0" -eq $? ]; then echoerr "Failed to find/mk $OUTPUT_DIR/$REPORTS_DIR"; return 1; fi;
 
 	return 0;
 }
@@ -325,7 +340,7 @@ function download_site() {
 
 	echo "Downloading site (this will take a while)..."
 
-	rm -rf "$SITE_DIR";
+	rm -rf "$OUTPUT_DIR/$SITE_DIR";
 
 	local COOKIES=(--keep-session-cookies --load-cookies "$COOKIE_FILE");
 	local LOG=(--output-file "$LOG_FILE");
@@ -433,16 +448,16 @@ function check_for_PHP_errors() {
 	local is_okay=true;
 
 	# grep returns 1 if nothing found
-	grep "${GREP_PARAMS[@]}" '^Fatal error: ' "$SITE_DIR" >> "$REPORT_FILE";
+	grep "${GREP_PARAMS[@]}" '^Fatal error: ' "$OUTPUT_DIR/$SITE_DIR" >> "$REPORT_FILE";
 	if [ "$?" -ne 1 ]; then is_okay=false; fi;
 
-	grep "${GREP_PARAMS[@]}" '^Warning: ' "$SITE_DIR" >> "$REPORT_FILE";
+	grep "${GREP_PARAMS[@]}" '^Warning: ' "$OUTPUT_DIR/$SITE_DIR" >> "$REPORT_FILE";
 	if [ "$?" -ne 1 ]; then is_okay=false; fi;
 
-	grep "${GREP_PARAMS[@]}" '^Notice: ' "$SITE_DIR" >> "$REPORT_FILE";
+	grep "${GREP_PARAMS[@]}" '^Notice: ' "$OUTPUT_DIR/$SITE_DIR" >> "$REPORT_FILE";
 	if [ "$?" -ne 1 ]; then is_okay=false; fi;
 
-	grep "${GREP_PARAMS[@]}" '^Strict Standards: ' "$SITE_DIR" >> "$REPORT_FILE";
+	grep "${GREP_PARAMS[@]}" '^Strict Standards: ' "$OUTPUT_DIR/$SITE_DIR" >> "$REPORT_FILE";
 	if [ "$?" -ne 1 ]; then is_okay=false; fi;
 
 
@@ -465,7 +480,7 @@ function check_for_PHPTAL_errors() {
 
 	local is_okay=true;
 
-	grep "${GREP_PARAMS[@]}" 'Error: ' "$SITE_DIR" >> "$REPORT_FILE";
+	grep "${GREP_PARAMS[@]}" 'Error: ' "$OUTPUT_DIR/$SITE_DIR" >> "$REPORT_FILE";
 	if [ 1 -ne "$?" ]; then is_okay=false; fi;
 
 
