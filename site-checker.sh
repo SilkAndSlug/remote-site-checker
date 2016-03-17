@@ -56,7 +56,7 @@ EXCLUDE_DIRS="";
 FORM="User/Login";
 HTTP_PASSWORD="";
 HTTP_USERNAME="";
-HTTP_LOGIN="";
+HTTP_LOGIN=();
 LOG_FILE="";
 PASSWORD="";
 IS_CRONJOB=false;
@@ -271,7 +271,7 @@ function update_internal_vars_with_config() {
 	SITE_DIR="$SITES_DIR/$DOMAIN";
 
 	if [[ ! -z "$HTTP_USERNAME" && ! -z "$HTTP_PASSWORD" ]]; then
-		HTTP_LOGIN="--auth-no-challenge --http-user=$HTTP_USERNAME --http-password=$HTTP_PASSWORD";
+		HTTP_LOGIN=(--auth-no-challenge --http-user="$HTTP_USERNAME" --http-password="$HTTP_PASSWORD");
 	fi;
 
 	return 0;
@@ -299,12 +299,12 @@ function login() {
 	local VERBOSITY="-q";
 	if [ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ]; then VERBOSITY="-vvv"; fi;
 
-	local COOKIES="--keep-session-cookies --save-cookies $COOKIE_FILE";
+	local COOKIES=(--keep-session-cookies --save-cookies "$COOKIE_FILE");
 
-	local LOGIN="--post-data username=$USERNAME&password=$PASSWORD --delete-after";
+	local LOGIN=(--post-data "username=$USERNAME&password=$PASSWORD" --delete-after);
 
 	# --no-check-certificate is a workaround for the self-cert on dev.SilkAndSlug.com
-	local COMMAND="wget $VERBOSITY --no-check-certificate $HTTP_LOGIN $COOKIES $LOGIN $TARGET/$FORM";
+	local COMMAND="wget $VERBOSITY --no-check-certificate ${HTTP_LOGIN[*]} ${COOKIES[*]} ${LOGIN[*]} $TARGET/$FORM";
 	if [ "$DEBUG_LEVEL" -ge "$DEBUG_VERBOSE" ]; then echo "login: $COMMAND"; fi;
 
 	$COMMAND;
@@ -327,13 +327,13 @@ function download_site() {
 
 	rm -rf "$SITE_DIR";
 
-	local COOKIES="--keep-session-cookies --load-cookies $COOKIE_FILE";
-	local LOG="--output-file $LOG_FILE";
-	local MIRROR="--mirror -e robots=off --page-requisites --no-parent";
+	local COOKIES=(--keep-session-cookies --load-cookies "$COOKIE_FILE");
+	local LOG=(--output-file "$LOG_FILE");
+	local MIRROR=(--mirror -e robots=off --page-requisites --no-parent);
 
-	local exclude_clause="";
+	local exclude_clause=();
 	if [ ! -z "$EXCLUDE_DIRS" ]; then
-		local exclude_clause="--exclude-directories=$EXCLUDE_DIRS";
+		local exclude_clause=(--exclude-directories="$EXCLUDE_DIRS");
 	fi;
 
 
@@ -346,7 +346,7 @@ function download_site() {
 
 	# --no-directories is a workaround for wget's 'pathconf: not a directory' error/bug
 	# --no-check-certificate is a workaround for the self-cert on dev.SilkAndSlug.com
-	local COMMAND="wget --content-on-error --no-directories --no-check-certificate $exclude_clause $HTTP_LOGIN $COOKIES $LOG $MIRROR $WAIT --directory-prefix $SITE_DIR $TARGET";
+	local COMMAND="wget --content-on-error --no-directories --no-check-certificate ${exclude_clause[*]} ${HTTP_LOGIN[*]} ${COOKIES[*]} ${LOG[*]} ${MIRROR[*]} $WAIT --directory-prefix $OUTPUT_DIR/$SITE_DIR $TARGET";
 	if [ "$DEBUG_LEVEL" -ge "$DEBUG_VERBOSE" ]; then echo "download_site: $COMMAND"; fi;
 
 
