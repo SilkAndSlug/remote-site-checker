@@ -20,14 +20,6 @@ set -u;
 # config
 #####
 
-OUTPUT_DIR="/tmp/site-checker";
-
-# relative to $OUTPUT_DIR
-readonly COOKIES_DIR="cookies";
-readonly LOGS_DIR="logs";
-readonly REPORTS_DIR="reports";
-readonly SITES_DIR="sites";
-
 # recursive, 2 prior lines, ignore Silk-Framework, images, etc
 readonly GREP_PARAMS=(-B 2 --exclude-dir=vendors/ --exclude-dir=silk/ --exclude-dir=data/ --exclude-dir=images/ --exclude=*.jpg -r);
 
@@ -48,25 +40,38 @@ readonly DEBUG_DEBUG=3;
 # internal vars
 #####
 
+#debugging
 DEBUG_LEVEL="$DEBUG_QUIET";
 
-COOKIE_FILE="";
 CONFIG_FILE="";
+
+# server
 DOMAIN="";
-EXCLUDE_DIRS="";
-FORM="User/Login";
+TARGET="";
+
+# login to server
+HTTP_LOGIN=();
 HTTP_PASSWORD="";
 HTTP_USERNAME="";
-HTTP_LOGIN=();
-LOG_FILE="";
+
+# login to site
+FORM="User/Login";
 PASSWORD="";
-IS_CRONJOB=false;
-REPORT_FILE="";
-DO_DOWNLOAD=true;
-DO_CHECKING=true;
-SITE_DIR="";
-TARGET="";
 USERNAME="";
+
+# downloads
+DO_DOWNLOAD=true;
+EXCLUDE_DIRS="";
+
+# output
+OUTPUT_DIR="/tmp/site-checker";
+LOG_FILE="";
+REPORT_FILE="";
+SITE_DIR="";
+
+# post-processing
+IS_CRONJOB=false;
+DO_CHECKING=true;
 
 
 
@@ -272,10 +277,10 @@ function extract_domain_from_target() {
 
 
 function update_internal_vars_with_config() {
-	COOKIE_FILE="$OUTPUT_DIR/$COOKIES_DIR/$DOMAIN.txt";
-	LOG_FILE="$OUTPUT_DIR/$LOGS_DIR/$DOMAIN.log";
-	REPORT_FILE="$OUTPUT_DIR/$REPORTS_DIR/$DOMAIN.txt";
 	# absolute
+	COOKIE_FILE="$OUTPUT_DIR/$DOMAIN.cookie";
+	LOG_FILE="$OUTPUT_DIR/$DOMAIN.log";
+	REPORT_FILE="$OUTPUT_DIR/$DOMAIN.report";
 	SITE_DIR="$OUTPUT_DIR/$DOMAIN";
 
 	if [[ ! -z "$HTTP_USERNAME" && ! -z "$HTTP_PASSWORD" ]]; then
@@ -290,14 +295,6 @@ function init_dirs() {
 	mkdir -p "$OUTPUT_DIR";
 	if [ ! "0" -eq $? ]; then echoerr "Failed to find/mk $OUTPUT_DIR"; return 1; fi;
 
-
-	mkdir -p "$OUTPUT_DIR/$COOKIES_DIR";
-	if [ ! "0" -eq $? ]; then echoerr "Failed to find/mk $OUTPUT_DIR/$COOKIES_DIR"; return 1; fi;
-
-	mkdir -p "$OUTPUT_DIR/$LOGS_DIR";
-	if [ ! "0" -eq $? ]; then echoerr "Failed to find/mk $OUTPUT_DIR/$LOGS_DIR"; return 1; fi;
-	mkdir -p "$OUTPUT_DIR/$REPORTS_DIR";
-	if [ ! "0" -eq $? ]; then echoerr "Failed to find/mk $OUTPUT_DIR/$REPORTS_DIR"; return 1; fi;
 	mkdir -p "$SITE_DIR";
 	if [ ! "0" -eq $? ]; then echoerr "Failed to find/mk $SITE_DIR"; return 1; fi;
 
