@@ -23,13 +23,13 @@ set -u;
 OUTPUT_DIR="/tmp/site-checker";
 
 # relative to $OUTPUT_DIR
-COOKIES_DIR="cookies";
-LOGS_DIR="logs";
-REPORTS_DIR="reports";
-SITES_DIR="sites";
+readonly COOKIES_DIR="cookies";
+readonly LOGS_DIR="logs";
+readonly REPORTS_DIR="reports";
+readonly SITES_DIR="sites";
 
 # recursive, 2 prior lines, ignore Silk-Framework, images, etc
-GREP_PARAMS=(-B 2 --exclude-dir=vendors/ --exclude-dir=silk/ --exclude-dir=data/ --exclude-dir=images/ --exclude=*.jpg -r);
+readonly GREP_PARAMS=(-B 2 --exclude-dir=vendors/ --exclude-dir=silk/ --exclude-dir=data/ --exclude-dir=images/ --exclude=*.jpg -r);
 
 
 #####
@@ -37,10 +37,10 @@ GREP_PARAMS=(-B 2 --exclude-dir=vendors/ --exclude-dir=silk/ --exclude-dir=data/
 #####
 
 # debug levels
-DEBUG_QUIET=0;
-DEBUG_INFO=1;
-DEBUG_VERBOSE=2;
-DEBUG_DEBUG=3;
+readonly DEBUG_QUIET=0;
+readonly DEBUG_INFO=1;
+readonly DEBUG_VERBOSE=2;
+readonly DEBUG_DEBUG=3;
 
 
 
