@@ -275,7 +275,8 @@ function update_internal_vars_with_config() {
 	COOKIE_FILE="$OUTPUT_DIR/$COOKIES_DIR/$DOMAIN.txt";
 	LOG_FILE="$OUTPUT_DIR/$LOGS_DIR/$DOMAIN.log";
 	REPORT_FILE="$OUTPUT_DIR/$REPORTS_DIR/$DOMAIN.txt";
-	SITE_DIR="$SITES_DIR/$DOMAIN";
+	# absolute
+	SITE_DIR="$OUTPUT_DIR/$DOMAIN";
 
 	if [[ ! -z "$HTTP_USERNAME" && ! -z "$HTTP_PASSWORD" ]]; then
 		HTTP_LOGIN=(--auth-no-challenge --http-user="$HTTP_USERNAME" --http-password="$HTTP_PASSWORD");
@@ -289,17 +290,16 @@ function init_dirs() {
 	mkdir -p "$OUTPUT_DIR";
 	if [ ! "0" -eq $? ]; then echoerr "Failed to find/mk $OUTPUT_DIR"; return 1; fi;
 
-	mkdir -p "$OUTPUT_DIR/$SITE_DIR";
-	if [ ! "0" -eq $? ]; then echoerr "Failed to find/mk $OUTPUT_DIR/$SITE_DIR"; return 1; fi;
 
 	mkdir -p "$OUTPUT_DIR/$COOKIES_DIR";
 	if [ ! "0" -eq $? ]; then echoerr "Failed to find/mk $OUTPUT_DIR/$COOKIES_DIR"; return 1; fi;
 
 	mkdir -p "$OUTPUT_DIR/$LOGS_DIR";
 	if [ ! "0" -eq $? ]; then echoerr "Failed to find/mk $OUTPUT_DIR/$LOGS_DIR"; return 1; fi;
-
 	mkdir -p "$OUTPUT_DIR/$REPORTS_DIR";
 	if [ ! "0" -eq $? ]; then echoerr "Failed to find/mk $OUTPUT_DIR/$REPORTS_DIR"; return 1; fi;
+	mkdir -p "$SITE_DIR";
+	if [ ! "0" -eq $? ]; then echoerr "Failed to find/mk $SITE_DIR"; return 1; fi;
 
 	return 0;
 }
@@ -341,8 +341,8 @@ function download_site() {
 
 	echo "Downloading site (this will take a while)..."
 
-	if [[ "" != "$OUTPUT_DIR" ]]; then
-		rm -rf "$OUTPUT_DIR/$SITE_DIR";
+	if [ ${#SITE_DIR} -gt 4 ]; then
+		rm -rf "$SITE_DIR";
 	fi;
 
 	local COOKIES=(--keep-session-cookies "--load-cookies $COOKIE_FILE");
@@ -364,7 +364,7 @@ function download_site() {
 
 	# --no-directories is a workaround for wget's 'pathconf: not a directory' error/bug
 	# --no-check-certificate is a workaround for the self-cert on dev.SilkAndSlug.com
-	local COMMAND="wget --content-on-error --no-directories --no-check-certificate ${exclude_clause[*]} ${HTTP_LOGIN[*]} ${COOKIES[*]} ${LOG[*]} ${MIRROR[*]} $WAIT --directory-prefix $OUTPUT_DIR/$SITE_DIR $TARGET";
+	local COMMAND="wget --content-on-error --no-directories --no-check-certificate ${exclude_clause[*]} ${HTTP_LOGIN[*]} ${COOKIES[*]} ${LOG[*]} ${MIRROR[*]} $WAIT --directory-prefix $SITE_DIR $TARGET";
 	if [ "$DEBUG_LEVEL" -ge "$DEBUG_VERBOSE" ]; then echo "download_site: $COMMAND"; fi;
 
 
@@ -451,16 +451,16 @@ function check_for_PHP_errors() {
 	local is_okay=true;
 
 	# grep returns 1 if nothing found
-	grep "${GREP_PARAMS[@]}" '^Fatal error: ' "$OUTPUT_DIR/$SITE_DIR" >> "$REPORT_FILE";
+	grep "${GREP_PARAMS[@]}" '^Fatal error: ' "$SITE_DIR" >> "$REPORT_FILE";
 	if [ "$?" -ne 1 ]; then is_okay=false; fi;
 
-	grep "${GREP_PARAMS[@]}" '^Warning: ' "$OUTPUT_DIR/$SITE_DIR" >> "$REPORT_FILE";
+	grep "${GREP_PARAMS[@]}" '^Warning: ' "$SITE_DIR" >> "$REPORT_FILE";
 	if [ "$?" -ne 1 ]; then is_okay=false; fi;
 
-	grep "${GREP_PARAMS[@]}" '^Notice: ' "$OUTPUT_DIR/$SITE_DIR" >> "$REPORT_FILE";
+	grep "${GREP_PARAMS[@]}" '^Notice: ' "$SITE_DIR" >> "$REPORT_FILE";
 	if [ "$?" -ne 1 ]; then is_okay=false; fi;
 
-	grep "${GREP_PARAMS[@]}" '^Strict Standards: ' "$OUTPUT_DIR/$SITE_DIR" >> "$REPORT_FILE";
+	grep "${GREP_PARAMS[@]}" '^Strict Standards: ' "$SITE_DIR" >> "$REPORT_FILE";
 	if [ "$?" -ne 1 ]; then is_okay=false; fi;
 
 
@@ -483,7 +483,7 @@ function check_for_PHPTAL_errors() {
 
 	local is_okay=true;
 
-	grep "${GREP_PARAMS[@]}" 'Error: ' "$OUTPUT_DIR/$SITE_DIR" >> "$REPORT_FILE";
+	grep "${GREP_PARAMS[@]}" 'Error: ' "$SITE_DIR" >> "$REPORT_FILE";
 	if [ 1 -ne "$?" ]; then is_okay=false; fi;
 
 
