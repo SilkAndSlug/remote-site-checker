@@ -58,6 +58,8 @@ HTTP_USERNAME="";
 FORM="User/Login";
 PASSWORD="";
 USERNAME="";
+LOGIN="";
+EMAIL_ADDRESS=""
 
 # downloads
 DO_DOWNLOAD=true;
@@ -203,6 +205,11 @@ function read_config_from_command_line {
 				shift;	# past argument
 				;;
 
+			-e|--email )
+				EMAIL_ADDRESS="$2";
+				shift;	# past argument
+				;;
+
 			-f|--form )
 				FORM="$2";
 				shift;	# past argument
@@ -220,6 +227,11 @@ function read_config_from_command_line {
 
 			--http-username )
 				HTTP_USERNAME="$2";
+				shift;	# past argument
+				;;
+
+			-l|--login )
+				LOGIN="$2";
 				shift;	# past argument
 				;;
 
@@ -261,6 +273,8 @@ function read_config_from_command_line {
 	if [ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ]; then echo "FORM = $FORM"; fi;
 	if [ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ]; then echo "PASSWORD = $PASSWORD"; fi;
 	if [ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ]; then echo "USERNAME = $USERNAME"; fi;
+	if [ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ]; then echo "EMAIL_ADDRESS = $EMAIL_ADDRESS"; fi;
+	if [ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ]; then echo "LOGIN = $LOGIN"; fi;
 
 	echo "...okay";
 	return 0;
@@ -308,21 +322,58 @@ function login {
 
 	echo "Logging-in...";
 
-
-	local VERBOSITY="-q";
+	# can't be quiet, as we're checking for redirects
+	local VERBOSITY="";
 	if [ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ]; then VERBOSITY="-vvv"; fi;
 
 	local COOKIES=(--keep-session-cookies --save-cookies "$COOKIE_FILE");
 
-	local LOGIN=(--post-data "username=$USERNAME&password=$PASSWORD" --delete-after);
+	local content="";
+	if [ -n "$LOGIN" ]; then
+		content="$content&$LOGIN";
+	fi;
+	if [ -n "$EMAIL_ADDRESS" ]; then
+		content="$content&email_address=$EMAIL_ADDRESS";
+	fi;
+	if [ -n "$PASSWORD" ]; then
+		content="$content&password=$PASSWORD";
+	fi;
+	if [ -n "$USERNAME" ]; then
+		content="$content&username=$USERNAME";
+	fi;
+	local login_clause=(--post-data "$content");
+
+	local tmp_log=$(tempfile);
 
 	# --no-check-certificate is a workaround for the self-cert on dev.SilkAndSlug.com
-	local COMMAND="wget $VERBOSITY --no-check-certificate ${HTTP_LOGIN[*]} ${COOKIES[*]} ${LOGIN[*]} $TARGET/$FORM";
-	if [ "$DEBUG_LEVEL" -ge "$DEBUG_VERBOSE" ]; then echo "login: $COMMAND"; fi;
+	local command="wget \
+		$VERBOSITY \
+		--no-check-certificate \
+		--output-file=$tmp_log \
+		${HTTP_LOGIN[*]} \
+		${COOKIES[*]} \
+		${login_clause[*]} \
+		$TARGET/$FORM";
+	if [ "$DEBUG_LEVEL" -ge "$DEBUG_VERBOSE" ]; then echo "login::command: $command"; fi;
 
-	$COMMAND;
-	if [ 0 -ne "$?" ]; then 
-		echoerr "Failed to login to $FORM as $USERNAME";
+	$command;
+	if [ 0 -ne "$?" ]; then
+		echoerr "Failed to login to $FORM with ${login_clause[*]}";
+		return 1;
+	fi;
+
+
+	# did the form handle our login?
+	grep 'Location:' "$tmp_log" >/dev/null
+	if [ 0 -ne "$?" ]; then
+		echoerr "Failed to redirect after login to $FORM with ${login_clause[*]} [bad credentials?]";
+		return 1;
+	fi;
+
+	# did the form accept our login?
+	( grep 'Location:' "$tmp_log" | grep "$FORM" ) >/dev/null;
+	if [ 0 -eq "$?" ]; then
+		echoerr "$FORM redirected to $FORM with ${LOGIN[*]} [bad credentials?]";
 		return 1;
 	fi;
 
