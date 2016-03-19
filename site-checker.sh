@@ -361,12 +361,23 @@ function download_site {
 
 	# --no-directories is a workaround for wget's 'pathconf: not a directory' error/bug
 	# --no-check-certificate is a workaround for the self-cert on dev.SilkAndSlug.com
-	local COMMAND="wget --content-on-error --no-directories --no-check-certificate ${exclude_clause[*]} ${HTTP_LOGIN[*]} ${COOKIES[*]} ${LOG[*]} ${MIRROR[*]} $WAIT --directory-prefix $SITE_DIR $TARGET";
-	if [ "$DEBUG_LEVEL" -ge "$DEBUG_VERBOSE" ]; then echo "download_site: $COMMAND"; fi;
+	local command="wget \
+		--adjust-extension --convert-links \
+		\--page-requisites --content-on-error \
+		--no-check-certificate \
+		${exclude_clause[*]} \
+		${HTTP_LOGIN[*]} \
+		${COOKIES[*]} \
+		${LOG[*]} \
+		${MIRROR[*]} \
+		$WAIT \
+		--directory-prefix $SITE_DIR \
+		$TARGET";
+	if [ "$DEBUG_LEVEL" -ge "$DEBUG_VERBOSE" ]; then echo "download_site: $command"; fi;
 
 
 	SECONDS=0;	# built-in var
-	$COMMAND;
+	$command;
 	local status="$?";
 	# 8 => server error (e.g. 404) - which we ignore (for now!)
 	if [ 0 -ne "$status" ] && [ 8 -ne "$status" ]; then
