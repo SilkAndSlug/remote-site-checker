@@ -283,7 +283,7 @@ function update_internal_vars_with_config {
 	REPORT_FILE="$OUTPUT_DIR/$DOMAIN.report";
 	SITE_DIR="$OUTPUT_DIR/$DOMAIN";
 
-	if [[ ! -z "$HTTP_USERNAME" && ! -z "$HTTP_PASSWORD" ]]; then
+	if [[ -n "$HTTP_USERNAME" && -n "$HTTP_PASSWORD" ]]; then
 		HTTP_LOGIN=(--auth-no-challenge --http-user="$HTTP_USERNAME" --http-password="$HTTP_PASSWORD");
 	fi;
 
@@ -347,7 +347,7 @@ function download_site {
 	local MIRROR=(--mirror "-e robots=off" --page-requisites --no-parent);
 
 	local exclude_clause=("");	# must be populated
-	if [ ! -z "$EXCLUDE_DIRS" ]; then
+	if [ -n "$EXCLUDE_DIRS" ]; then
 		local exclude_clause=(--exclude-directories="$EXCLUDE_DIRS");
 	fi;
 
