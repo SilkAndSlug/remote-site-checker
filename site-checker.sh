@@ -21,7 +21,8 @@ set -u;
 #####
 
 # recursive, 2 prior lines, ignore Silk-Framework, images, etc
-readonly GREP_PARAMS=(-B 2 --exclude-dir=vendors/ --exclude-dir=silk/ --exclude-dir=data/ --exclude-dir=images/ --exclude=*.jpg -r);
+readonly GREP_PARAMS=(-B 2 --exclude-dir=vendors/ --exclude-dir=silk/ --exclude-dir=migrate/ --exclude-dir=export/ --exclude-dir=data/ --exclude-dir=images/ --exclude=*.jpg -r);
+
 
 
 #####
