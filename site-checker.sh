@@ -79,7 +79,7 @@ DO_CHECKING=true;
 # functions
 #####
 
-function echo_usage() {
+function echo_usage {
 	echo "Usage: 'basename $0' [OPTIONS] [TARGET]";
 	echo "";
 	echo "TARGET should be a URL, including protocol";
@@ -103,7 +103,7 @@ function echo_usage() {
 }
 
 
-function init() {
+function init {
 	if [ $# -eq 0 ]; then
 		echo_usage;
 		return 1;
@@ -139,7 +139,7 @@ function init() {
 }
 
 
-function read_config_from_file() {
+function read_config_from_file {
 
 	echo "Reading config from file...";
 
@@ -179,7 +179,7 @@ function read_config_from_file() {
 }
 
 
-function read_config_from_command_line() {
+function read_config_from_command_line {
 
 	echo "Reading config from command line...";
 
@@ -267,7 +267,7 @@ function read_config_from_command_line() {
 }
 
 
-function extract_domain_from_target() {
+function extract_domain_from_target {
 	# extract DOMAIN from TARGET
 	DOMAIN=$(echo "$TARGET" | awk -F/ '{print $3}');
 	if [ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ]; then echo "DOMAIN = $DOMAIN"; fi;
@@ -276,7 +276,7 @@ function extract_domain_from_target() {
 }
 
 
-function update_internal_vars_with_config() {
+function update_internal_vars_with_config {
 	# absolute
 	COOKIE_FILE="$OUTPUT_DIR/$DOMAIN.cookie";
 	LOG_FILE="$OUTPUT_DIR/$DOMAIN.log";
@@ -291,7 +291,7 @@ function update_internal_vars_with_config() {
 }
 
 
-function init_dirs() {
+function init_dirs {
 	mkdir -p "$OUTPUT_DIR";
 	if [ ! "0" -eq $? ]; then echoerr "Failed to find/mk $OUTPUT_DIR"; return 1; fi;
 
@@ -302,7 +302,7 @@ function init_dirs() {
 }
 
 
-function login() {
+function login {
 	if [ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ]; then echo "site-checker::login"; fi;
 
 
@@ -332,7 +332,7 @@ function login() {
 }
 
 
-function download_site() {
+function download_site {
 	if [ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ]; then echo "site-checker::download_site"; fi;
 
 
@@ -383,7 +383,7 @@ function download_site() {
 }
 
 
-function fettle_log_file() {
+function fettle_log_file {
 	cp "$LOG_FILE" "$LOG_FILE.bak";
 
 	echo "Fettling log file...";
@@ -410,7 +410,7 @@ function fettle_log_file() {
 }
 
 
-function check_for_HTTP_errors() {
+function check_for_HTTP_errors {
 	if [ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ]; then echo "site-checker::check_for_HTTP_errors"; fi;
 
 
@@ -440,7 +440,7 @@ function check_for_HTTP_errors() {
 }
 
 
-function check_for_PHP_errors() {
+function check_for_PHP_errors {
 	if [ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ]; then echo "site-checker::check_for_PHP_errors"; fi;
 
 	echo "Checking for PHP errors..."
@@ -473,7 +473,7 @@ function check_for_PHP_errors() {
 }
 
 
-function check_for_PHPTAL_errors() {
+function check_for_PHPTAL_errors {
 	if [ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ]; then echo "site-checker::check_for_PHPTAL_errors"; fi;
 
 	echo "Checking for PHPTAL error-strings..."
@@ -496,7 +496,7 @@ function check_for_PHPTAL_errors() {
 }
 
 
-function seconds2time () {
+function seconds2time {
 	if [ $# -ne 1 ]; then
 		echoerr "Usage: seconds2time {seconds}";
 		return 1;
@@ -519,7 +519,7 @@ function seconds2time () {
 }
 
 
-function main() {
+function main {
 	init "$@";
 	if [ 0 -ne "$?" ]; then return 1; fi;
 
