@@ -81,29 +81,62 @@ DO_CHECKING=true;
 # functions
 #####
 
-function echo_usage {
-	echo "Usage: 'basename $0' [OPTIONS] [TARGET]";
+function main {
+	init "$@";
+	if [ 0 -ne "$?" ]; then return 1; fi;
+
 	echo "";
-	echo "TARGET should be a URL, including protocol";
 	echo "";
-	echo "-c|--configuration	Path to config file";
-	echo "-cj|--cronjob		Caller is a cronjob; run script non-interactively";
-	echo "-d|--dir		Directory to hold generated files; defaults to /tmp/site-checker";
-	echo "-f|--form		URL for login form, relative to TARGET; defaults to User/Login";
-	echo "-u|--user		username for login form";
-	echo "--http-username		HTTP-login for TARGET";
-	echo "--http-password		HTTP-login for TARGET";
-	echo "-p|--password		Password for login form";
-	echo "-X|--exclude-directories		Comma-separated(?) list of /directories/ to NOT crawl";
-	echo "-nc|--no-checking		Don't refresh the report; output previous report"
-	echo "-nd|--no-download		Don't refresh the download; check previous downloads"
-	echo "-v increase verbosity (-v = info; -vv = verbose; -vvv = debug)";
+	echo "########";
+	echo "## Running Site-Checker on $TARGET";
+	echo "########";
 	echo "";
-	echo "Returns 1 on error, and 0 on success";
+
+	if [ true == $DO_DOWNLOAD ]; then
+		login ;
+		if [ 0 -ne "$?" ]; then return 1; fi;
+
+		download_site ;
+		if [ 0 -ne "$?" ]; then return 1; fi;
+
+		fettle_log_file
+		if [ 0 -ne "$?" ]; then return 1; fi;
+	fi;
+
+
+	local is_okay=true;
+	local status;
+	if [ true == "$DO_CHECKING" ]; then
+		# empty report
+		if [[ -f "$REPORT_FILE" ]]; then rm "$REPORT_FILE"; fi;
+
+		check_for_HTTP_errors ;
+		if [ 0 -ne "$?" ]; then is_okay=false; fi;
+
+		check_for_PHP_errors ;
+		if [ 0 -ne "$?" ]; then is_okay=false; fi;
+
+		check_for_PHPTAL_errors ;
+		if [ 0 -ne "$?" ]; then is_okay=false; fi;
+	fi;
+
+	if [ false == "$is_okay" ]; then
+		local ERROR_COUNT=$(( $(wc -l < "$REPORT_FILE") / 3 ));
+		echoerr "Found $ERROR_COUNT errors";
+
+		if [ false == $IS_CRONJOB ]; then
+			read -n1 -r -p "Press space to continue..." key ;
+		fi;
+
+		cat "$REPORT_FILE";
+		if [ 0 -ne "$?" ]; then return 1; fi;
+
+		return 1;
+	fi;
+
 
 	return 0;
 }
-
 
 function init {
 	if [ $# -eq 0 ]; then
@@ -139,8 +172,28 @@ function init {
 
 	return 0;
 }
+function echo_usage {
+	echo "Usage: 'basename $0' [OPTIONS] [TARGET]";
+	echo "";
+	echo "TARGET should be a URL, including protocol";
+	echo "";
+	echo "-c|--configuration	Path to config file";
+	echo "-cj|--cronjob		Caller is a cronjob; run script non-interactively";
+	echo "-d|--dir		Directory to hold generated files; defaults to /tmp/site-checker";
+	echo "-f|--form		URL for login form, relative to TARGET; defaults to User/Login";
+	echo "-u|--user		username for login form";
+	echo "--http-username		HTTP-login for TARGET";
+	echo "--http-password		HTTP-login for TARGET";
+	echo "-p|--password		Password for login form";
+	echo "-X|--exclude-directories		Comma-separated(?) list of /directories/ to NOT crawl";
+	echo "-nc|--no-checking		Don't refresh the report; output previous report"
+	echo "-nd|--no-download		Don't refresh the download; check previous downloads"
+	echo "-v increase verbosity (-v = info; -vv = verbose; -vvv = debug)";
+	echo "";
+	echo "Returns 1 on error, and 0 on success";
 
-
+	return 0;
+}
 function read_config_from_file {
 
 	echo "Reading config from file...";
@@ -179,8 +232,6 @@ function read_config_from_file {
 
 	return 0;
 }
-
-
 function read_config_from_command_line {
 
 	echo "Reading config from command line...";
@@ -279,8 +330,6 @@ function read_config_from_command_line {
 	echo "...okay";
 	return 0;
 }
-
-
 function extract_domain_from_target {
 	# extract DOMAIN from TARGET
 	DOMAIN=$(echo "$TARGET" | awk -F/ '{print $3}');
@@ -288,8 +337,6 @@ function extract_domain_from_target {
 
 	return 0;
 }
-
-
 function update_internal_vars_with_config {
 	# absolute
 	COOKIE_FILE="$OUTPUT_DIR/$DOMAIN.cookie";
@@ -303,8 +350,6 @@ function update_internal_vars_with_config {
 
 	return 0;
 }
-
-
 function init_dirs {
 	mkdir -p "$OUTPUT_DIR";
 	if [ ! "0" -eq $? ]; then echoerr "Failed to find/mk $OUTPUT_DIR"; return 1; fi;
@@ -314,7 +359,6 @@ function init_dirs {
 
 	return 0;
 }
-
 
 function login {
 	if [ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ]; then echo "site-checker::login"; fi;
@@ -381,8 +425,6 @@ function login {
 	echo "...okay";
 	return 0;
 }
-
-
 function download_site {
 	if [ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ]; then echo "site-checker::download_site"; fi;
 
@@ -443,8 +485,6 @@ function download_site {
 	echo "...okay in $tmp";
 	return 0;
 }
-
-
 function fettle_log_file {
 	cp "$LOG_FILE" "$LOG_FILE.bak";
 
@@ -470,8 +510,6 @@ function fettle_log_file {
 
 	return 0;
 }
-
-
 function check_for_HTTP_errors {
 	if [ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ]; then echo "site-checker::check_for_HTTP_errors"; fi;
 
@@ -500,8 +538,6 @@ function check_for_HTTP_errors {
 
 	return 0;
 }
-
-
 function check_for_PHP_errors {
 	if [ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ]; then echo "site-checker::check_for_PHP_errors"; fi;
 
@@ -533,8 +569,6 @@ function check_for_PHP_errors {
 
 	return 0;
 }
-
-
 function check_for_PHPTAL_errors {
 	if [ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ]; then echo "site-checker::check_for_PHPTAL_errors"; fi;
 
@@ -557,7 +591,6 @@ function check_for_PHPTAL_errors {
 	return 0;
 }
 
-
 function seconds2time {
 	if [ $# -ne 1 ]; then
 		echoerr "Usage: seconds2time {seconds}";
@@ -576,64 +609,6 @@ function seconds2time {
 		return 0;
 	fi
 	printf '%d days %02d:%02d:%02d' $D $H $M $S;
-
-	return 0;
-}
-
-
-function main {
-	init "$@";
-	if [ 0 -ne "$?" ]; then return 1; fi;
-
-	echo "";
-	echo "";
-	echo "########";
-	echo "## Running Site-Checker on $TARGET";
-	echo "########";
-	echo "";
-
-	if [ true == $DO_DOWNLOAD ]; then
-		login ;
-		if [ 0 -ne "$?" ]; then return 1; fi;
-
-		download_site ;
-		if [ 0 -ne "$?" ]; then return 1; fi;
-
-		fettle_log_file
-		if [ 0 -ne "$?" ]; then return 1; fi;
-	fi;
-
-
-	local is_okay=true;
-	local status;
-	if [ true == "$DO_CHECKING" ]; then
-		# empty report
-		if [[ -f "$REPORT_FILE" ]]; then rm "$REPORT_FILE"; fi;
-
-		check_for_HTTP_errors ;
-		if [ 0 -ne "$?" ]; then is_okay=false; fi;
-
-		check_for_PHP_errors ;
-		if [ 0 -ne "$?" ]; then is_okay=false; fi;
-
-		check_for_PHPTAL_errors ;
-		if [ 0 -ne "$?" ]; then is_okay=false; fi;
-	fi;
-
-	if [ false == "$is_okay" ]; then
-		local ERROR_COUNT=$(( $(wc -l < "$REPORT_FILE") / 3 ));
-		echoerr "Found $ERROR_COUNT errors";
-
-		if [ false == $IS_CRONJOB ]; then
-			read -n1 -r -p "Press space to continue..." key ;
-		fi;
-
-		cat "$REPORT_FILE";
-		if [ 0 -ne "$?" ]; then return 1; fi;
-
-		return 1;
-	fi;
-
 
 	return 0;
 }
