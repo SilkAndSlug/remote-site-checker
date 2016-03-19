@@ -457,7 +457,7 @@ function download_site {
 	# --no-check-certificate is a workaround for the self-cert on dev.SilkAndSlug.com
 	local command="wget \
 		--adjust-extension --convert-links \
-		\--page-requisites --content-on-error \
+		--page-requisites --content-on-error \
 		--no-check-certificate \
 		${exclude_clause[*]} \
 		${HTTP_LOGIN[*]} \
