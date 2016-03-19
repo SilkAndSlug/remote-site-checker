@@ -50,7 +50,7 @@ DOMAIN="";
 TARGET="";
 
 # login to server
-HTTP_LOGIN=();
+HTTP_LOGIN=("");	# must be populated
 HTTP_PASSWORD="";
 HTTP_USERNAME="";
 
@@ -346,7 +346,7 @@ function download_site {
 	local LOG=("--output-file $LOG_FILE");
 	local MIRROR=(--mirror "-e robots=off" --page-requisites --no-parent);
 
-	local exclude_clause=();
+	local exclude_clause=("");	# must be populated
 	if [ ! -z "$EXCLUDE_DIRS" ]; then
 		local exclude_clause=(--exclude-directories="$EXCLUDE_DIRS");
 	fi;
