@@ -395,6 +395,7 @@ function login {
 		$VERBOSITY \
 		--no-check-certificate \
 		--output-file=$tmp_log \
+		--directory-prefix $SITE_DIR \
 		${HTTP_LOGIN[*]} \
 		${COOKIES[*]} \
 		${login_clause[*]} \
