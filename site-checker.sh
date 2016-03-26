@@ -411,13 +411,15 @@ function login {
 
 	# did the form handle our login?
 	grep 'Location:' "$tmp_log" >/dev/null
-	if [ 0 -ne "$?" ]; then
+	# grep returns 0 if found
+	if [ 0 -eq "$?" ]; then
 		echoerr "Failed to redirect after login to $FORM with ${login_clause[*]} [bad credentials?]";
 		return 1;
 	fi;
 
 	# did the form accept our login?
 	( grep 'Location:' "$tmp_log" | grep "$FORM" ) >/dev/null;
+	# grep returns 0 if found
 	if [ 0 -eq "$?" ]; then
 		echoerr "$FORM redirected to $FORM with ${LOGIN[*]} [bad credentials?]";
 		return 1;
