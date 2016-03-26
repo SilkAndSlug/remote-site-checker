@@ -386,6 +386,10 @@ function login {
 	if [ -n "$USERNAME" ]; then
 		content="$content&username=$USERNAME";
 	fi;
+	if [ -z "$content" ]; then
+		echo "...not configured; skipping";
+		return 0;
+	fi;
 	local login_clause=(--post-data "$content");
 
 	local tmp_log=$(tempfile);
