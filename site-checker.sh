@@ -20,20 +20,10 @@ set -u;
 # config
 #####
 
+source /home/silkandslug/bin/includes/definitions.sh;
+
 # recursive, 2 prior lines, ignore Silk-Framework, images, etc
 readonly GREP_PARAMS=(-B 2 --exclude-dir=vendors/ --exclude-dir=silk/ --exclude-dir=migrate/ --exclude-dir=export/ --exclude-dir=data/ --exclude-dir=images/ --exclude=*.jpg -r);
-
-
-
-#####
-# constants
-#####
-
-# debug levels
-readonly DEBUG_QUIET=0;
-readonly DEBUG_INFO=1;
-readonly DEBUG_VERBOSE=2;
-readonly DEBUG_DEBUG=3;
 
 
 
