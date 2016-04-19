@@ -32,7 +32,7 @@ readonly GREP_PARAMS=(-B 2 --exclude-dir=vendors/ --exclude-dir=silk/ --exclude-
 #####
 
 #debugging
-DEBUG_LEVEL="$DEBUG_QUIET";
+export DEBUG_LEVEL="$DEBUG_QUIET";
 
 CONFIG_FILE="";
 
@@ -380,7 +380,7 @@ function login {
 		echo "...not configured; skipping";
 		return 0;
 	fi;
-	local login_clause=(--post-data "$content");
+	local login_clause=("--post-data='$content'");
 
 	local tmp_log=$(tempfile);
 
