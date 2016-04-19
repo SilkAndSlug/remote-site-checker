@@ -3,8 +3,6 @@
 ## Crawls the given URL, checking for wget errors (e.g. HTTP 404) and PHP
 ## errors (e.g. FATAL)
 
-## @todo		get signed cert for dev.silkandslug.com; remove --no-check-certificate
-
 
 
 #####
@@ -384,10 +382,8 @@ function login {
 
 	local tmp_log=$(tempfile);
 
-	# --no-check-certificate is a workaround for the self-cert on dev.SilkAndSlug.com
 	local command="wget \
 		$VERBOSITY \
-		--no-check-certificate \
 		--output-file=$tmp_log \
 		--directory-prefix $SITE_DIR \
 		${HTTP_LOGIN[*]} \
@@ -451,11 +447,9 @@ function download_site {
 
 
 	# --no-directories is a workaround for wget's 'pathconf: not a directory' error/bug
-	# --no-check-certificate is a workaround for the self-cert on dev.SilkAndSlug.com
 	local command="wget \
 		--adjust-extension --convert-links \
 		--page-requisites --content-on-error \
-		--no-check-certificate \
 		${exclude_clause[*]} \
 		${HTTP_LOGIN[*]} \
 		${COOKIES[*]} \
