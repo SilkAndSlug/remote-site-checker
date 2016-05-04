@@ -162,7 +162,7 @@ function init {
 	return 0;
 }
 function echo_usage {
-	echo "Usage: $(basename $0) [OPTIONS] [TARGET]";
+	echo "Usage: $(basename "$0") [OPTIONS] [TARGET]";
 	echo "";
 	echo "TARGET should be a URL, including protocol";
 	echo "";
