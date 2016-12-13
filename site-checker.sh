@@ -271,16 +271,34 @@ function extract_domain_from_target {
 
 	return 0;
 }
+
+
+
+########
+# Derives global configs from other global configs
+#
+# Globals
+#	Lots
+#
+# Arguments
+#	None
+#
+# Returns
+#	None
+########
 function update_internal_vars_with_config {
-	# absolute
+	## absolute paths
 	COOKIE_FILE="$OUTPUT_DIR/$DOMAIN.cookie";
 	LOG_FILE="$OUTPUT_DIR/$DOMAIN.log";
 	REPORT_FILE="$OUTPUT_DIR/$DOMAIN.report";
 	SITE_DIR="$OUTPUT_DIR/$DOMAIN";
 
+
+	## for wget
 	if [[ -n "$HTTP_USERNAME" && -n "$HTTP_PASSWORD" ]]; then
 		HTTP_LOGIN=(--auth-no-challenge --http-user="$HTTP_USERNAME" --http-password="$HTTP_PASSWORD");
 	fi;
+
 
 	return 0;
 }
