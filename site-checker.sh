@@ -342,7 +342,8 @@ function login() {
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "site-checker::login";
 
 
-	echo "Logging-in...";
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "Logging-in...";
+
 
 	# can't be quiet, as we're checking for redirects
 	local VERBOSITY='';
@@ -364,7 +365,7 @@ function login() {
 		content="$content&username=$USERNAME";
 	fi;
 	if [ -z "$content" ]; then
-		echo "...not configured; skipping";
+		[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "...not configured; skipping";
 		return 0;
 	fi;
 	local login_clause=("--post-data='$content'");
@@ -403,7 +404,7 @@ function login() {
 	};
 
 
-	echo "...okay";
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "...okay";
 	return 0;
 }
 
@@ -428,7 +429,7 @@ function login() {
 #	None
 ########
 function download_site() {
-	echo "Downloading site...";
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "Downloading site...";
 
 
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "download_site::SITE_DIR ${#SITE_DIR}";
@@ -481,7 +482,7 @@ function download_site() {
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo -e "download_site::command $command";
 
 
-	echo "...starting crawl (this will take a while)...";
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "...starting crawl (this will take a while)...";
 
 
 	SECONDS=0;	# built-in var
@@ -497,7 +498,9 @@ function download_site() {
 
 
 	tmp=$(seconds2time "$SECONDS");
-	echo "...done in $tmp";
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "...done in $tmp";
+
+
 	return 0;
 }
 
@@ -505,7 +508,7 @@ function download_site() {
 function fettle_log_file() {
 	cp "$LOG_FILE" "$LOG_FILE.bak";
 
-	echo "Fettling log file...";
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "Fettling log file...";
 
 	# strip lines
 	sed -i "s|Reusing existing connection to [^:]*:80\.||" "$LOG_FILE";
@@ -523,7 +526,7 @@ function fettle_log_file() {
 	sed -i '/^[0-9]/G' "$LOG_FILE";
 
 
-	echo "...done";
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "...done";
 
 	return 0;
 }
@@ -533,7 +536,7 @@ function check_for_HTTP_errors() {
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "site-checker::check_for_HTTP_errors";
 
 
-	echo "Checking for HTTP errors...";
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "Checking for HTTP errors...";
 
 
 	# output [45]xx errors to tmp file
@@ -553,7 +556,7 @@ function check_for_HTTP_errors() {
 	fi;
 
 
-	echo "...okay";
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "...okay";
 
 	return 0;
 }
@@ -562,7 +565,7 @@ function check_for_HTTP_errors() {
 function check_for_PHP_errors() {
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "site-checker::check_for_PHP_errors";
 
-	echo "Checking for PHP errors..."
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "Checking for PHP errors..."
 
 	local is_okay=true;
 
@@ -584,7 +587,7 @@ function check_for_PHP_errors() {
 	fi;
 
 
-	echo "...okay";
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "...okay";
 
 	return 0;
 }
@@ -593,7 +596,7 @@ function check_for_PHP_errors() {
 function check_for_PHPTAL_errors() {
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "site-checker::check_for_PHPTAL_errors";
 
-	echo "Checking for PHPTAL error-strings..."
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "Checking for PHPTAL error-strings..."
 
 	local is_okay=true;
 
@@ -606,7 +609,7 @@ function check_for_PHPTAL_errors() {
 	fi;
 
 
-	echo "...okay";
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "...okay";
 
 	return 0;
 }
