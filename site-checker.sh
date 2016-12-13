@@ -379,7 +379,7 @@ function login() {
 		${COOKIES[*]} \
 		${login_clause[*]} \
 		$TARGET/$FORM";
-	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "login::command: $command";
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "login::command $command";
 
 	$command || {
 		echoerr "Failed to login to $FORM with ${login_clause[*]}; quitting";
@@ -478,7 +478,7 @@ function download_site() {
 		${HTTP_LOGIN[*]} \
 		$TARGET \
 	";
-	[ "$DEBUG_LEVEL" -ge "$DEBUG_VERBOSE" ] && echo -e "download_site: $command";
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo -e "download_site::command $command";
 
 
 	echo "...starting crawl (this will take a while)...";
