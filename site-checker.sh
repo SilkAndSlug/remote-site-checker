@@ -541,6 +541,9 @@ function check_for_PHP_errors {
 	grep "${GREP_PARAMS[@]}" 'Fatal error: ' "$SITE_DIR" >> "$REPORT_FILE";
 	if [ "$?" -ne 1 ]; then is_okay=false; fi;
 
+	grep "${GREP_PARAMS[@]}" 'Error:</b>' "$SITE_DIR" >> "$REPORT_FILE";
+	if [ "$?" -ne 1 ]; then is_okay=false; fi;
+
 	grep "${GREP_PARAMS[@]}" 'Warning: ' "$SITE_DIR" >> "$REPORT_FILE";
 	if [ "$?" -ne 1 ]; then is_okay=false; fi;
 
