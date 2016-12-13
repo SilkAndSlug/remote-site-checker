@@ -31,7 +31,7 @@ readonly GREP_PARAMS=(-B 2 --exclude-dir=vendors/ --exclude-dir=silk/ --exclude-
 ################################################################################
 
 #debugging
-export DEBUG_LEVEL="$DEBUG_QUIET";
+export DEBUG_LEVEL="$DEBUG_DEFAULT";
 
 export CONFIG_FILE='';
 
