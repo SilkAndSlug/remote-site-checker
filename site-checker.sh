@@ -447,10 +447,8 @@ function download_site() {
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "Downloading site...";
 
 
-	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "download_site::SITE_DIR ${#SITE_DIR}";
-	if [ ${#SITE_DIR} -gt 4 ]; then
-		rm -rf "$SITE_DIR";
-	fi;
+	## empty cache
+	if [ -d "$SITE_DIR" ]; then rm -rf "$SITE_DIR"; fi;
 	if [ -d "$SITE_DIR" ]; then
 		echoerr "Dir $SITE_DIR still exists; quitting";
 		return 1;
