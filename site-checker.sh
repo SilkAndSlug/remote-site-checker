@@ -81,11 +81,9 @@ function init {
 
 	local status ;
 
-	read_config_from_file "$@";
-	if [ 0 -ne "$?" ]; then return 1; fi;
+	read_config_from_file "$@" || return 1;
 
-	read_config_from_command_line "$@";
-	if [ 0 -ne "$?" ]; then return 1; fi;
+	read_config_from_command_line "$@" || return 1;
 
 	# if TARGET missing or empty, exit
 	if [[ "" == "$TARGET" ]]; then
@@ -94,14 +92,11 @@ function init {
 		return 1;
 	fi;
 
-	extract_domain_from_target ;
-	if [ 0 -ne "$?" ]; then return 1; fi;
+	extract_domain_from_target  || return 1;
 
-	update_internal_vars_with_config ;
-	if [ 0 -ne "$?" ]; then return 1; fi;
+	update_internal_vars_with_config  || return 1;
 
-	init_dirs ;
-	if [ 0 -ne "$?" ]; then return 1; fi;
+	init_dirs  || return 1;
 
 
 	return 0;
@@ -325,7 +320,7 @@ function init_dirs {
 	}
 
 
-	mkdir -p "$SITE_DIR" {
+	mkdir -p "$SITE_DIR" || {
 		echoerr "Failed to find/mk $SITE_DIR; crashing";
 		exit 1;
 	}
@@ -522,20 +517,15 @@ function check_for_PHP_errors {
 	local is_okay=true;
 
 	# grep returns 1 if nothing found
-	grep "${GREP_PARAMS[@]}" 'Fatal error: ' "$SITE_DIR" >> "$REPORT_FILE";
-	if [ "$?" -ne 1 ]; then is_okay=false; fi;
+	grep "${GREP_PARAMS[@]}" 'Fatal error: ' "$SITE_DIR" >> "$REPORT_FILE" && is_okay=false;
 
-	grep "${GREP_PARAMS[@]}" 'Error:</b>' "$SITE_DIR" >> "$REPORT_FILE";
-	if [ "$?" -ne 1 ]; then is_okay=false; fi;
+	grep "${GREP_PARAMS[@]}" 'Error:</b>' "$SITE_DIR" >> "$REPORT_FILE" && is_okay=false;
 
-	grep "${GREP_PARAMS[@]}" 'Warning: ' "$SITE_DIR" >> "$REPORT_FILE";
-	if [ "$?" -ne 1 ]; then is_okay=false; fi;
+	grep "${GREP_PARAMS[@]}" 'Warning: ' "$SITE_DIR" >> "$REPORT_FILE" && is_okay=false;
 
-	grep "${GREP_PARAMS[@]}" 'Notice: ' "$SITE_DIR" >> "$REPORT_FILE";
-	if [ "$?" -ne 1 ]; then is_okay=false; fi;
+	grep "${GREP_PARAMS[@]}" 'Notice: ' "$SITE_DIR" >> "$REPORT_FILE" && is_okay=false;
 
-	grep "${GREP_PARAMS[@]}" 'Strict Standards: ' "$SITE_DIR" >> "$REPORT_FILE";
-	if [ "$?" -ne 1 ]; then is_okay=false; fi;
+	grep "${GREP_PARAMS[@]}" 'Strict Standards: ' "$SITE_DIR" >> "$REPORT_FILE" && is_okay=false;
 
 
 	if [ false == "$is_okay" ]; then
@@ -555,8 +545,7 @@ function check_for_PHPTAL_errors {
 
 	local is_okay=true;
 
-	grep "${GREP_PARAMS[@]}" 'Error: ' "$SITE_DIR" >> "$REPORT_FILE";
-	if [ 1 -ne "$?" ]; then is_okay=false; fi;
+	grep "${GREP_PARAMS[@]}" 'Error: ' "$SITE_DIR" >> "$REPORT_FILE" && is_okay=false;
 
 
 	if [ false == "$is_okay" ]; then
@@ -654,18 +643,11 @@ function main {
 		echo '###';
 		echo '';
 
-		# empty report
-		if [[ -f "$REPORT_FILE" ]]; then rm "$REPORT_FILE"; fi;
+		[ -f "$REPORT_FILE" ] && rm "$REPORT_FILE"; # empty report
 
-		check_for_HTTP_errors ;
-		if [ 0 -ne "$?" ]; then is_okay=false; fi;
-
-		check_for_PHP_errors ;
-		if [ 0 -ne "$?" ]; then is_okay=false; fi;
-
-		check_for_PHPTAL_errors ;
-		if [ 0 -ne "$?" ]; then is_okay=false; fi;
-
+		check_for_HTTP_errors || is_okay=false;
+		check_for_PHP_errors || is_okay=false;
+		check_for_PHPTAL_errors || is_okay=false;
 		echo '';
 		echo '###';
 		echo '# ...done';
@@ -688,7 +670,7 @@ function main {
 
 
 	# tidy login page, if any
-	if [ -f "$FORM" ]; then rm "$FORM"; fi;
+	[ -f "$FORM" ] && rm "$FORM";
 
 
 	return 0;
