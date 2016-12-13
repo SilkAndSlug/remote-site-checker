@@ -284,15 +284,38 @@ function update_internal_vars_with_config {
 
 	return 0;
 }
-function init_dirs {
-	mkdir -p "$OUTPUT_DIR";
-	if [ ! "0" -eq $? ]; then echoerr "Failed to find/mk $OUTPUT_DIR"; return 1; fi;
 
-	mkdir -p "$SITE_DIR";
-	if [ ! "0" -eq $? ]; then echoerr "Failed to find/mk $SITE_DIR"; return 1; fi;
+
+
+########
+# Creates necessary dirs
+#
+# Globals
+#	OUTPUT_DIR		Where to store reports
+#	SITE_DIR		Where to store downloaded files
+#
+# Arguments
+#	None
+#
+# Returns
+#	None
+########
+function init_dirs {
+	mkdir -p "$OUTPUT_DIR" || {
+		echoerr "Failed to find/mk $OUTPUT_DIR; crashing";
+		exit 1;
+	}
+
+
+	mkdir -p "$SITE_DIR" {
+		echoerr "Failed to find/mk $SITE_DIR; crashing";
+		exit 1;
+	}
+
 
 	return 0;
 }
+
 
 function login {
 	if [ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ]; then echo "site-checker::login"; fi;
