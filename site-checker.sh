@@ -130,13 +130,13 @@ function echo_usage() {
 function read_config_from_file() {
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "Reading config from file...";
 
+
 	# handle params
 	while [ $# -gt 0 ]; do
 		key="$1";
 
 		case "$key" in
 			-c|--configuration )
-				# debugging++
 				CONFIG_FILE="$2";
 				shift;	# past argument
 				;;
@@ -620,19 +620,8 @@ function main() {
 	init "$@" || return 1;
 
 
-	echo "";
-	echo "";
-	echo "########";
-	echo "## Running Site-Checker on $TARGET";
-	echo "########";
-	echo "";
 
 
-		echo '';
-		echo '###';
-		echo '# Starting download...';
-		echo '###';
-		echo '';
 
 	if [ true = $DO_DOWNLOAD ]; then
 		login  || return 1;
@@ -641,34 +630,17 @@ function main() {
 
 		fettle_log_file
 		if [ 0 -ne "$?" ]; then return 1; fi;
-
-		echo '';
-		echo '###';
-		echo '# ...done';
-		echo '###';
-		echo '';
 	fi;
 
 
 	local is_okay=true;
 	local status;
-		echo '';
-		echo '###';
-		echo '# Starting checking...';
-		echo '###';
-		echo '';
-
 	if [ true = "$DO_CHECKING" ]; then
 		[ -f "$REPORT_FILE" ] && rm "$REPORT_FILE"; # empty report
 
 		check_for_HTTP_errors || is_okay=false;
 		check_for_PHP_errors || is_okay=false;
 		check_for_PHPTAL_errors || is_okay=false;
-		echo '';
-		echo '###';
-		echo '# ...done';
-		echo '###';
-		echo '';
 	fi;
 
 	if [ false = "$is_okay" ]; then
