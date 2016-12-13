@@ -303,6 +303,13 @@ function update_internal_vars_with_config() {
 	fi;
 
 
+	## cookie file must exit
+	touch "$COOKIE_FILE" || {
+		echoerr "Can't touch $COOKIE_FILE; crashing";
+		exit 1;
+	};
+
+
 	return 0;
 }
 
