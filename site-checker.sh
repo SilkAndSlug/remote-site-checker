@@ -86,7 +86,7 @@ function init() {
 	read_config_from_command_line "$@" || return 1;
 
 	# if TARGET missing or empty, exit
-	if [[ "" == "$TARGET" ]]; then
+	if [ "" = "$TARGET" ]; then
 		echoerr "No target given";
 		echo_usage;
 		return 1;
@@ -131,7 +131,7 @@ function read_config_from_file() {
 	echo "Reading config from file...";
 
 	# handle params
-	while [[ $# -gt 0 ]]; do
+	while [ $# -gt 0 ]; do
 		key="$1"
 
 		case $key in
@@ -147,8 +147,8 @@ function read_config_from_file() {
 
 
 	# if CONFIG_FILE missing or empty, return
-	if [[ "" = "$CONFIG_FILE" ]]; then
 		echo "No config file selected; skipping";
+	if [ "" = "$CONFIG_FILE" ]; then
 		return 0;
 	fi;
 
@@ -171,7 +171,7 @@ function read_config_from_command_line() {
 
 
 	# handle params
-	while [[ $# -gt 0 ]]; do
+	while [ $# -gt 0 ]; do
 		key="$1"
 
 		case $key in
@@ -296,7 +296,8 @@ function update_internal_vars_with_config() {
 
 
 	## for wget
-	if [[ -n "$HTTP_USERNAME" && -n "$HTTP_PASSWORD" ]]; then
+	HTTP_LOGIN=('');	# must be populated
+	if [ -n "$HTTP_USERNAME" ] && [ -n "$HTTP_PASSWORD" ]; then
 		HTTP_LOGIN=(--auth-no-challenge --http-user="$HTTP_USERNAME" --http-password="$HTTP_PASSWORD");
 	fi;
 
