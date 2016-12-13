@@ -337,28 +337,26 @@ function login {
 		$TARGET/$FORM";
 	if [ "$DEBUG_LEVEL" -ge "$DEBUG_VERBOSE" ]; then echo "login::command: $command"; fi;
 
-	$command;
-	if [ 0 -ne "$?" ]; then
-		echoerr "Failed to login to $FORM with ${login_clause[*]}";
+	$command || {
+		echoerr "Failed to login to $FORM with ${login_clause[*]}; quitting";
 		return 1;
-	fi;
+	};
 
 
 	# did the form handle our login?
-	grep 'Location:' "$tmp_log" >/dev/null
 	# grep returns 0 if found
-	if [ 0 -eq "$?" ]; then
-		echoerr "Failed to redirect after login to $FORM with ${login_clause[*]} [bad credentials?]";
+	grep 'Location:' "$tmp_log" >/dev/null && {
+		echoerr "Failed to redirect after login to $FORM with ${login_clause[*]} [bad credentials?]; quitting";
 		return 1;
-	fi;
+	};
+
 
 	# did the form accept our login?
-	( grep 'Location:' "$tmp_log" | grep "$FORM" ) >/dev/null;
 	# grep returns 0 if found
-	if [ 0 -eq "$?" ]; then
-		echoerr "$FORM redirected to $FORM with ${LOGIN[*]} [bad credentials?]";
+	( grep 'Location:' "$tmp_log" | grep "$FORM" ) >/dev/null && {
+		echoerr "$FORM redirected to $FORM with ${LOGIN[*]} [bad credentials?]; quitting";
 		return 1;
-	fi;
+	};
 
 
 	echo "...okay";
