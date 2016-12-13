@@ -71,62 +71,6 @@ DO_CHECKING=true;
 ## Functions
 ################################################################################
 
-function main {
-	init "$@";
-	if [ 0 -ne "$?" ]; then return 1; fi;
-
-	echo "";
-	echo "";
-	echo "########";
-	echo "## Running Site-Checker on $TARGET";
-	echo "########";
-	echo "";
-
-	if [ true == $DO_DOWNLOAD ]; then
-		login ;
-		if [ 0 -ne "$?" ]; then return 1; fi;
-
-		download_site ;
-		if [ 0 -ne "$?" ]; then return 1; fi;
-
-		fettle_log_file
-		if [ 0 -ne "$?" ]; then return 1; fi;
-	fi;
-
-
-	local is_okay=true;
-	local status;
-	if [ true == "$DO_CHECKING" ]; then
-		# empty report
-		if [[ -f "$REPORT_FILE" ]]; then rm "$REPORT_FILE"; fi;
-
-		check_for_HTTP_errors ;
-		if [ 0 -ne "$?" ]; then is_okay=false; fi;
-
-		check_for_PHP_errors ;
-		if [ 0 -ne "$?" ]; then is_okay=false; fi;
-
-		check_for_PHPTAL_errors ;
-		if [ 0 -ne "$?" ]; then is_okay=false; fi;
-	fi;
-
-	if [ false == "$is_okay" ]; then
-		local ERROR_COUNT=$(( $(wc -l < "$REPORT_FILE") / 3 ));
-		echoerr "Found $ERROR_COUNT errors";
-
-		if [ false == $IS_CRONJOB ]; then
-			read -n1 -r -p "Press space to continue..." key ;
-		fi;
-
-		cat "$REPORT_FILE";
-		if [ 0 -ne "$?" ]; then return 1; fi;
-
-		return 1;
-	fi;
-
-
-	return 0;
-}
 
 function init {
 	if [ $# -eq 0 ]; then
@@ -611,6 +555,62 @@ function seconds2time {
 
 
 
+function main {
+	init "$@";
+	if [ 0 -ne "$?" ]; then return 1; fi;
+
+	echo "";
+	echo "";
+	echo "########";
+	echo "## Running Site-Checker on $TARGET";
+	echo "########";
+	echo "";
+
+	if [ true == $DO_DOWNLOAD ]; then
+		login ;
+		if [ 0 -ne "$?" ]; then return 1; fi;
+
+		download_site ;
+		if [ 0 -ne "$?" ]; then return 1; fi;
+
+		fettle_log_file
+		if [ 0 -ne "$?" ]; then return 1; fi;
+	fi;
+
+
+	local is_okay=true;
+	local status;
+	if [ true == "$DO_CHECKING" ]; then
+		# empty report
+		if [[ -f "$REPORT_FILE" ]]; then rm "$REPORT_FILE"; fi;
+
+		check_for_HTTP_errors ;
+		if [ 0 -ne "$?" ]; then is_okay=false; fi;
+
+		check_for_PHP_errors ;
+		if [ 0 -ne "$?" ]; then is_okay=false; fi;
+
+		check_for_PHPTAL_errors ;
+		if [ 0 -ne "$?" ]; then is_okay=false; fi;
+	fi;
+
+	if [ false == "$is_okay" ]; then
+		local ERROR_COUNT=$(( $(wc -l < "$REPORT_FILE") / 3 ));
+		echoerr "Found $ERROR_COUNT errors";
+
+		if [ false == $IS_CRONJOB ]; then
+			read -n1 -r -p "Press space to continue..." key ;
+		fi;
+
+		cat "$REPORT_FILE";
+		if [ 0 -ne "$?" ]; then return 1; fi;
+
+		return 1;
+	fi;
+
+
+	return 0;
+}
 
 # run
 main "$@";
