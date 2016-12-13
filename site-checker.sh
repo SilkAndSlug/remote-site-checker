@@ -464,6 +464,7 @@ function download_site() {
 
 	## assemble command
 	# --no-directories is a workaround for wget's 'pathconf: not a directory' error/bug
+	# --directory-prefix $SITE_DIR \
 	command="wget \
 		--adjust-extension \
 		--content-on-error \
@@ -475,7 +476,6 @@ function download_site() {
 		${log[*]} \
 		${mirror[*]} \
 		${HTTP_LOGIN[*]} \
-		--directory-prefix $SITE_DIR \
 		$TARGET \
 	";
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_VERBOSE" ] && echo -e "download_site: $command";
