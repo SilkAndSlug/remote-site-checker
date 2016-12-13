@@ -1,22 +1,23 @@
 #!/bin/bash
-
-## Crawls the given URL, checking for wget errors (e.g. HTTP 404) and PHP
-## errors (e.g. FATAL)
-
-
-
-#####
-# init
-#####
-
-# unset vars throw errors
-set -u;
+########
+# Crawls the given URL, checking for wget errors (e.g. HTTP 404) and PHP errors 
+# (e.g. FATAL)
+########
 
 
 
-#####
-# config
-#####
+################################################################################
+## Bootstrap
+################################################################################
+
+set -u;	# unset vars throw errors
+set -e;	# errors exit
+
+
+
+################################################################################
+## Config
+################################################################################
 
 source /home/silkandslug/bin/includes/definitions.sh;
 
@@ -25,9 +26,9 @@ readonly GREP_PARAMS=(-B 2 --exclude-dir=vendors/ --exclude-dir=silk/ --exclude-
 
 
 
-#####
-# internal vars
-#####
+################################################################################
+## Init vars
+################################################################################
 
 #debugging
 export DEBUG_LEVEL="$DEBUG_QUIET";
@@ -66,9 +67,9 @@ DO_CHECKING=true;
 
 
 
-#####
-# functions
-#####
+################################################################################
+## Functions
+################################################################################
 
 function main {
 	init "$@";
@@ -610,9 +611,6 @@ function seconds2time {
 
 
 
-#####
-# run, tidy, quit
-#####
 
 # run
 main "$@";
@@ -622,4 +620,7 @@ if [ 0 -ne "$?" ]; then exit 1; fi;
 if [ -f "$FORM" ]; then rm "$FORM"; fi;
 
 # exit
+################################################################################
+## Run, tidy, quit
+################################################################################
 exit 0;
