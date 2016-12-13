@@ -457,7 +457,7 @@ function download_site() {
 	fi;
 
 	# wait 1sec, unless we're hitting the DEV server
-	delay="--wait 1";
+	delay='--wait 1';
 	if [ 'dev.silkandslug.com' = "${DOMAIN,,}" ]; then
 		delay='';
 	fi;
