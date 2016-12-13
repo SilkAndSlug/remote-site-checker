@@ -339,7 +339,7 @@ function init_dirs() {
 
 
 function login() {
-	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "site-checker::login";
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "site-checker::login";
 
 
 	echo "Logging-in...";
@@ -379,7 +379,7 @@ function login() {
 		${COOKIES[*]} \
 		${login_clause[*]} \
 		$TARGET/$FORM";
-	[ "$DEBUG_LEVEL" -ge "$DEBUG_VERBOSE" ] && echo "login::command: $command";
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "login::command: $command";
 
 	$command || {
 		echoerr "Failed to login to $FORM with ${login_clause[*]}; quitting";
@@ -431,7 +431,7 @@ function download_site() {
 	echo "Downloading site...";
 
 
-	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "download_site::SITE_DIR ${#SITE_DIR}";
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "download_site::SITE_DIR ${#SITE_DIR}";
 	if [ ${#SITE_DIR} -gt 4 ]; then
 		rm -rf "$SITE_DIR";
 	fi;
@@ -530,7 +530,7 @@ function fettle_log_file() {
 
 
 function check_for_HTTP_errors() {
-	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "site-checker::check_for_HTTP_errors";
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "site-checker::check_for_HTTP_errors";
 
 
 	echo "Checking for HTTP errors...";
@@ -560,7 +560,7 @@ function check_for_HTTP_errors() {
 
 
 function check_for_PHP_errors() {
-	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "site-checker::check_for_PHP_errors";
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "site-checker::check_for_PHP_errors";
 
 	echo "Checking for PHP errors..."
 
@@ -591,7 +591,7 @@ function check_for_PHP_errors() {
 
 
 function check_for_PHPTAL_errors() {
-	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "site-checker::check_for_PHPTAL_errors";
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "site-checker::check_for_PHPTAL_errors";
 
 	echo "Checking for PHPTAL error-strings..."
 
