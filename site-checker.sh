@@ -49,7 +49,7 @@ export FORM='User/Login';
 export PASSWORD='';
 export USERNAME='';
 export LOGIN='';
-export EMAIL_ADDRESS=''
+export EMAIL_ADDRESS='';
 
 # downloads
 export DO_DOWNLOAD=true;
@@ -117,8 +117,8 @@ function echo_usage() {
 	echo "--http-password		HTTP-login for TARGET";
 	echo "-p|--password		Password for login form";
 	echo "-X|--exclude-directories		Comma-separated(?) list of /directories/ to NOT crawl";
-	echo "-nc|--no-checking		Don't refresh the report; output previous report"
-	echo "-nd|--no-download		Don't refresh the download; check previous downloads"
+	echo "-nc|--no-checking		Don't refresh the report; output previous report";
+	echo "-nd|--no-download		Don't refresh the download; check previous downloads";
 	echo "-v increase verbosity (-v = info; -vv = verbose; -vvv = debug)";
 	echo "";
 	echo "Returns 1 on error, and 0 on success";
@@ -132,7 +132,7 @@ function read_config_from_file() {
 
 	# handle params
 	while [ $# -gt 0 ]; do
-		key="$1"
+		key="$1";
 
 		case $key in
 			-c|--configuration )
@@ -140,9 +140,9 @@ function read_config_from_file() {
 				CONFIG_FILE="$2";
 				shift;	# past argument
 				;;
-		esac
-		shift # past argument
-	done
+		esac;
+		shift; # past argument
+	done;
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "CONFIG_FILE = $CONFIG_FILE";
 
 
@@ -172,7 +172,7 @@ function read_config_from_command_line() {
 
 	# handle params
 	while [ $# -gt 0 ]; do
-		key="$1"
+		key="$1";
 
 		case $key in
 			-c|configuration )
@@ -248,11 +248,11 @@ function read_config_from_command_line() {
 				;;
 
 			* )
-				TARGET=$key;
+				TARGET="$key";
 				;;
-		esac
-		shift # past argument
-	done
+		esac;
+		shift; # past argument
+	done;
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "DEBUG_LEVEL = $DEBUG_LEVEL";
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "FORM = $FORM";
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "PASSWORD = $PASSWORD";
@@ -580,17 +580,17 @@ function seconds2time() {
 		return 1;
 	fi;
 
-	T=$1
-	D=$((T/60/60/24))
-	H=$((T/60/60%24))
-	M=$((T/60%60))
-	S=$((T%60))
+	T=$1;
+	D=$((T/60/60/24));
+	H=$((T/60/60%24));
+	M=$((T/60%60));
+	S=$((T%60));
 
 
 	if [ $D -eq 0 ]; then
-		printf '%02d:%02d:%02d' $H $M $S
+		printf '%02d:%02d:%02d' $H $M $S;
 		return 0;
-	fi
+	fi;
 	printf '%d days %02d:%02d:%02d' $D $H $M $S;
 
 	return 0;
