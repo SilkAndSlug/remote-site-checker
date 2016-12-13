@@ -408,48 +408,85 @@ function login() {
 }
 
 
-	echo "Downloading site (this will take a while)..."
 
+########
+# Download the named site to a local dir
+#
+# Globals
+#	COOKIE_FILE		Where the site login is stored
+#	DOMAIN			Domain we're downloading; used to disable throttling
+#	EXCLUDE_DIRS	Dirs to NOT download
+#	HTTP_LOGIN		Params for HTTP login; passed to wget
+#	LOG_FILE		Where to store output
+#	SITE_DIR		Where to store files
+#	TARGET			URL to download
+#
+# Arguments
+#	None
+#
+# Returns
+#	None
+########
 function download_site() {
+	echo "Downloading site...";
+
+
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "download_site::SITE_DIR ${#SITE_DIR}";
 	if [ ${#SITE_DIR} -gt 4 ]; then
 		rm -rf "$SITE_DIR";
 	fi;
-
-	local COOKIES=(--keep-session-cookies "--load-cookies $COOKIE_FILE");
-	local LOG=("--output-file $LOG_FILE");
-	local MIRROR=(--mirror "-e robots=off" --page-requisites --no-parent);
-
-	local exclude_clause=("");	# must be populated
-	if [ -n "$EXCLUDE_DIRS" ]; then
-		local exclude_clause=(--exclude-directories="$EXCLUDE_DIRS");
+	if [ -d "$SITE_DIR" ]; then
+		echoerr "Dir $SITE_DIR still exists; quitting";
+		return 1;
 	fi;
 
+
+	## init vars
+	local command cookies delay exclude_clause log mirror status tmp;
+
+
+	## config
+	cookies=(--keep-session-cookies "--load-cookies $COOKIE_FILE");
+	log=("--output-file $LOG_FILE");
+	mirror=(--mirror "-e robots=off" --page-requisites --no-parent);
+
+	exclude_clause=('');	# must be populated
+	if [ ! -z "$EXCLUDE_DIRS" ]; then
+		exclude_clause=(--exclude-directories="$EXCLUDE_DIRS");
+	fi;
 
 	# wait 1sec, unless we're hitting the DEV server
-	local WAIT="--wait 1";
-		WAIT="";
+	delay="--wait 1";
 	if [ 'dev.silkandslug.com' = "${DOMAIN,,}" ]; then
+		delay='';
 	fi;
 
 
+	## assemble command
 	# --no-directories is a workaround for wget's 'pathconf: not a directory' error/bug
-	local command="wget \
-		--adjust-extension --convert-links \
-		--page-requisites --content-on-error \
+	command="wget \
+		--adjust-extension \
+		--content-on-error \
+		--convert-links \
+		--page-requisites \
+		${cookies[*]} \
+		$delay \
 		${exclude_clause[*]} \
+		${log[*]} \
+		${mirror[*]} \
 		${HTTP_LOGIN[*]} \
-		${COOKIES[*]} \
-		${LOG[*]} \
-		${MIRROR[*]} \
-		$WAIT \
 		--directory-prefix $SITE_DIR \
-		$TARGET";
+		$TARGET \
+	";
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_VERBOSE" ] && echo -e "download_site: $command";
+
+
+	echo "...starting crawl (this will take a while)...";
 
 
 	SECONDS=0;	# built-in var
 	$command;
-	local status="$?";
+	status="$?";
 	# 8 => server error (e.g. 404) - which we ignore (for now!)
 	if [ 0 -ne "$status" ] && [ 8 -ne "$status" ]; then
 		tmp=$(seconds2time "$SECONDS");
@@ -460,7 +497,7 @@ function download_site() {
 
 
 	tmp=$(seconds2time "$SECONDS");
-	echo "...okay in $tmp";
+	echo "...done in $tmp";
 	return 0;
 }
 
