@@ -555,6 +555,23 @@ function seconds2time {
 
 
 
+########
+# Read inputs and trigger login, download, and/or reporting as appropriate
+#
+# Globals
+#	DO_CHECKING		Bool
+#	DO_DOWNLOAD		Bool
+#	FORM			Login form; deleted at end
+#	IS_CRONJOB		Bool
+#	REPORT_FILE		Where to put outputs
+#	TARGET			Used for feedback
+#
+# Arguments
+#	@				Passed to init()
+#
+# Returns
+#	None
+########
 function main {
 	init "$@";
 	if [ 0 -ne "$?" ]; then return 1; fi;
