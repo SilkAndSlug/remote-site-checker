@@ -581,7 +581,13 @@ function main {
 	echo "########";
 	echo "";
 
+
 	if [ true == $DO_DOWNLOAD ]; then
+		echo '';
+		echo '###';
+		echo '# Starting download...';
+		echo '###';
+		echo '';
 
 		login  || return 1;
 
@@ -589,12 +595,24 @@ function main {
 
 		fettle_log_file
 		if [ 0 -ne "$?" ]; then return 1; fi;
+
+		echo '';
+		echo '###';
+		echo '# ...done';
+		echo '###';
+		echo '';
 	fi;
 
 
 	local is_okay=true;
 	local status;
 	if [ true == "$DO_CHECKING" ]; then
+		echo '';
+		echo '###';
+		echo '# Starting checking...';
+		echo '###';
+		echo '';
+
 		# empty report
 		if [[ -f "$REPORT_FILE" ]]; then rm "$REPORT_FILE"; fi;
 
@@ -606,6 +624,12 @@ function main {
 
 		check_for_PHPTAL_errors ;
 		if [ 0 -ne "$?" ]; then is_okay=false; fi;
+
+		echo '';
+		echo '###';
+		echo '# ...done';
+		echo '###';
+		echo '';
 	fi;
 
 	if [ false == "$is_okay" ]; then
