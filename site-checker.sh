@@ -352,13 +352,19 @@ function login() {
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "Logging-in...";
 
 
+	## init vars
+	local command content cookies login_clause tmp_log verbosity;
+
+
+	## config
+
 	# can't be quiet, as we're checking for redirects
-	local VERBOSITY='';
-	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && VERBOSITY="-vvv";
+	verbosity='';
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && verbosity="-vvv";
 
-	local COOKIES=(--keep-session-cookies --save-cookies "$COOKIE_FILE");
+	cookies=(--keep-session-cookies --save-cookies "$COOKIE_FILE");
 
-	local content='';
+	content='';
 	if [ -n "$LOGIN" ]; then
 		content="$content&$LOGIN";
 	fi;
@@ -375,16 +381,18 @@ function login() {
 		[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "...not configured; skipping";
 		return 0;
 	fi;
-	local login_clause=("--post-data='$content'");
+	login_clause=("--post-data='$content'");
 
-	local tmp_log=$(tempfile);
+	tmp_log=$(tempfile);
 
-	local command="wget \
-		$VERBOSITY \
+
+	## build command
+	command="wget \
+		$verbosity \
 		--output-file=$tmp_log \
 		--directory-prefix $SITE_DIR \
 		${HTTP_LOGIN[*]} \
-		${COOKIES[*]} \
+		${cookies[*]} \
 		${login_clause[*]} \
 		$TARGET/$FORM";
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "login::command $command";
