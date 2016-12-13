@@ -105,9 +105,9 @@ function init() {
 
 function echo_usage() {
 	echo "Usage: $(basename "$0") [OPTIONS] [TARGET]";
-	echo "";
+	echo;
 	echo "TARGET should be a URL, including protocol";
-	echo "";
+	echo;
 	echo "-c|--configuration	Path to config file";
 	echo "-cj|--cronjob		Caller is a cronjob; run script non-interactively";
 	echo "-d|--dir		Directory to hold generated files; defaults to /tmp/site-checker";
@@ -120,7 +120,7 @@ function echo_usage() {
 	echo "-nc|--no-checking		Don't refresh the report; output previous report";
 	echo "-nd|--no-download		Don't refresh the download; check previous downloads";
 	echo "-v increase verbosity (-v = info; -vv = verbose; -vvv = debug)";
-	echo "";
+	echo;
 	echo "Returns 1 on error, and 0 on success";
 
 	return 0;
