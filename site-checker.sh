@@ -427,8 +427,8 @@ function download_site() {
 
 	# wait 1sec, unless we're hitting the DEV server
 	local WAIT="--wait 1";
-	if [ 'dev.silkandslug.com' == "${DOMAIN,,}" ]; then
 		WAIT="";
+	if [ 'dev.silkandslug.com' = "${DOMAIN,,}" ]; then
 	fi;
 
 
@@ -541,7 +541,7 @@ function check_for_PHP_errors() {
 	grep "${GREP_PARAMS[@]}" 'Strict Standards: ' "$SITE_DIR" >> "$REPORT_FILE" && is_okay=false;
 
 
-	if [ false == "$is_okay" ]; then
+	if [ false = "$is_okay" ]; then
 		echoerr "Found PHP errors; quitting";
 		return 2;
 	fi;
@@ -563,7 +563,7 @@ function check_for_PHPTAL_errors() {
 	grep "${GREP_PARAMS[@]}" 'Error: ' "$SITE_DIR" >> "$REPORT_FILE" && is_okay=false;
 
 
-	if [ false == "$is_okay" ]; then
+	if [ false = "$is_okay" ]; then
 		echoerr "Found PHPTAL error-strings; quitting";
 		return 2;
 	fi;
@@ -628,13 +628,13 @@ function main() {
 	echo "";
 
 
-	if [ true == $DO_DOWNLOAD ]; then
 		echo '';
 		echo '###';
 		echo '# Starting download...';
 		echo '###';
 		echo '';
 
+	if [ true = $DO_DOWNLOAD ]; then
 		login  || return 1;
 
 		download_site  || return 1;
@@ -652,13 +652,13 @@ function main() {
 
 	local is_okay=true;
 	local status;
-	if [ true == "$DO_CHECKING" ]; then
 		echo '';
 		echo '###';
 		echo '# Starting checking...';
 		echo '###';
 		echo '';
 
+	if [ true = "$DO_CHECKING" ]; then
 		[ -f "$REPORT_FILE" ] && rm "$REPORT_FILE"; # empty report
 
 		check_for_HTTP_errors || is_okay=false;
@@ -671,11 +671,11 @@ function main() {
 		echo '';
 	fi;
 
-	if [ false == "$is_okay" ]; then
+	if [ false = "$is_okay" ]; then
 		local ERROR_COUNT=$(( $(wc -l < "$REPORT_FILE") / 3 ));
 		echoerr "Found $ERROR_COUNT errors";
 
-		if [ false == $IS_CRONJOB ]; then
+		if [ false = $IS_CRONJOB ]; then
 			read -n1 -r -p "Press space to continue..." key ;
 		fi;
 
