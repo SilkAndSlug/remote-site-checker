@@ -609,18 +609,18 @@ function main {
 	fi;
 
 
+	# tidy login page, if any
+	if [ -f "$FORM" ]; then rm "$FORM"; fi;
+
+
 	return 0;
 }
 
-# run
-main "$@";
-if [ 0 -ne "$?" ]; then exit 1; fi;
 
-# tidy login page, if any
-if [ -f "$FORM" ]; then rm "$FORM"; fi;
 
-# exit
 ################################################################################
 ## Run, tidy, quit
 ################################################################################
+
+main "$@" || exit 1;
 exit 0;
