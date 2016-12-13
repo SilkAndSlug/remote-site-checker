@@ -128,7 +128,7 @@ function echo_usage() {
 
 
 function read_config_from_file() {
-	echo "Reading config from file...";
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "Reading config from file...";
 
 	# handle params
 	while [ $# -gt 0 ]; do
@@ -147,8 +147,8 @@ function read_config_from_file() {
 
 
 	# if CONFIG_FILE missing or empty, return
-		echo "No config file selected; skipping";
 	if [ '' = "$CONFIG_FILE" ]; then
+		[ "$DEBUG_LEVEL" -ge "$DEBUG_DEFAULT" ] && echo "No config file selected; skipping";
 		return 0;
 	fi;
 
@@ -159,7 +159,7 @@ function read_config_from_file() {
 
 
 	source "$CONFIG_FILE";
-	echo "...okay";
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "...okay";
 
 
 	return 0;
@@ -167,7 +167,7 @@ function read_config_from_file() {
 
 
 function read_config_from_command_line() {
-	echo "Reading config from command line...";
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "Reading config from command line...";
 
 
 	# handle params
@@ -260,7 +260,8 @@ function read_config_from_command_line() {
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "EMAIL_ADDRESS = $EMAIL_ADDRESS";
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "LOGIN = $LOGIN";
 
-	echo "...okay";
+
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "...okay";
 	return 0;
 }
 
