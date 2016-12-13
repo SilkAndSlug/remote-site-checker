@@ -152,7 +152,7 @@ function read_config_from_file() {
 		return 0;
 	fi;
 
-	if [[ ! -f "$CONFIG_FILE" ]]; then
+	if [ ! -f "$CONFIG_FILE" ]; then
 		echoerr "File $CONFIG_FILE doesn't exist";
 		return 1;
 	fi;
