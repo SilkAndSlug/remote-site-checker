@@ -143,7 +143,7 @@ function read_config_from_file() {
 		esac
 		shift # past argument
 	done
-	if [ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ]; then echo "CONFIG_FILE = $CONFIG_FILE"; fi;
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "CONFIG_FILE = $CONFIG_FILE";
 
 
 	# if CONFIG_FILE missing or empty, return
@@ -253,12 +253,12 @@ function read_config_from_command_line() {
 		esac
 		shift # past argument
 	done
-	if [ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ]; then echo "DEBUG_LEVEL = $DEBUG_LEVEL"; fi;
-	if [ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ]; then echo "FORM = $FORM"; fi;
-	if [ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ]; then echo "PASSWORD = $PASSWORD"; fi;
-	if [ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ]; then echo "USERNAME = $USERNAME"; fi;
-	if [ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ]; then echo "EMAIL_ADDRESS = $EMAIL_ADDRESS"; fi;
-	if [ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ]; then echo "LOGIN = $LOGIN"; fi;
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "DEBUG_LEVEL = $DEBUG_LEVEL";
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "FORM = $FORM";
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "PASSWORD = $PASSWORD";
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "USERNAME = $USERNAME";
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "EMAIL_ADDRESS = $EMAIL_ADDRESS";
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "LOGIN = $LOGIN";
 
 	echo "...okay";
 	return 0;
@@ -268,7 +268,7 @@ function read_config_from_command_line() {
 function extract_domain_from_target() {
 	# extract DOMAIN from TARGET
 	DOMAIN=$(echo "$TARGET" | awk -F/ '{print $3}');
-	if [ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ]; then echo "DOMAIN = $DOMAIN"; fi;
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "DOMAIN = $DOMAIN";
 
 	return 0;
 }
@@ -338,14 +338,14 @@ function init_dirs() {
 
 
 function login() {
-	if [ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ]; then echo "site-checker::login"; fi;
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "site-checker::login";
 
 
 	echo "Logging-in...";
 
 	# can't be quiet, as we're checking for redirects
 	local VERBOSITY="";
-	if [ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ]; then VERBOSITY="-vvv"; fi;
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && VERBOSITY="-vvv";
 
 	local COOKIES=(--keep-session-cookies --save-cookies "$COOKIE_FILE");
 
@@ -378,7 +378,7 @@ function login() {
 		${COOKIES[*]} \
 		${login_clause[*]} \
 		$TARGET/$FORM";
-	if [ "$DEBUG_LEVEL" -ge "$DEBUG_VERBOSE" ]; then echo "login::command: $command"; fi;
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_VERBOSE" ] && echo "login::command: $command";
 
 	$command || {
 		echoerr "Failed to login to $FORM with ${login_clause[*]}; quitting";
@@ -405,7 +405,6 @@ function login() {
 	echo "...okay";
 	return 0;
 }
-	if [ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ]; then echo "site-checker::download_site"; fi;
 
 
 	echo "Downloading site (this will take a while)..."
@@ -444,7 +443,7 @@ function download_site() {
 		$WAIT \
 		--directory-prefix $SITE_DIR \
 		$TARGET";
-	if [ "$DEBUG_LEVEL" -ge "$DEBUG_VERBOSE" ]; then echo "download_site: $command"; fi;
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_VERBOSE" ] && echo -e "download_site: $command";
 
 
 	SECONDS=0;	# built-in var
@@ -493,7 +492,7 @@ function fettle_log_file() {
 
 
 function check_for_HTTP_errors() {
-	if [ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ]; then echo "site-checker::check_for_HTTP_errors"; fi;
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "site-checker::check_for_HTTP_errors";
 
 
 	echo "Checking for HTTP errors...";
@@ -523,7 +522,7 @@ function check_for_HTTP_errors() {
 
 
 function check_for_PHP_errors() {
-	if [ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ]; then echo "site-checker::check_for_PHP_errors"; fi;
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "site-checker::check_for_PHP_errors";
 
 	echo "Checking for PHP errors..."
 
@@ -554,7 +553,7 @@ function check_for_PHP_errors() {
 
 
 function check_for_PHPTAL_errors() {
-	if [ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ]; then echo "site-checker::check_for_PHPTAL_errors"; fi;
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "site-checker::check_for_PHPTAL_errors";
 
 	echo "Checking for PHPTAL error-strings..."
 
