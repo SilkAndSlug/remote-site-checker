@@ -134,7 +134,7 @@ function read_config_from_file() {
 	while [ $# -gt 0 ]; do
 		key="$1";
 
-		case $key in
+		case "$key" in
 			-c|--configuration )
 				# debugging++
 				CONFIG_FILE="$2";
@@ -174,7 +174,7 @@ function read_config_from_command_line() {
 	while [ $# -gt 0 ]; do
 		key="$1";
 
-		case $key in
+		case "$key" in
 			-c|configuration )
 				# config file; skip
 				shift;	# past argument
