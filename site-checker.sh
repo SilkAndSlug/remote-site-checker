@@ -480,8 +480,8 @@ function download_site() {
 
 	## assemble command
 	# --no-directories is a workaround for wget's 'pathconf: not a directory' error/bug
-	# --directory-prefix $SITE_DIR \
 	command="wget \
+		--directory-prefix $(dirname "$SITE_DIR") \
 		--adjust-extension \
 		--content-on-error \
 		--convert-links \
