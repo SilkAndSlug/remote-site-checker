@@ -460,9 +460,10 @@ function download_site() {
 
 
 	## config
-	cookies=(--keep-session-cookies "--load-cookies $COOKIE_FILE");
 	log=("--output-file $LOG_FILE");
 	mirror=(--mirror "-e robots=off" --page-requisites --no-parent);
+
+	cookies=('--keep-session-cookies' "--load-cookies $COOKIE_FILE");
 
 	exclude_clause=('');	# must be populated
 	if [ ! -z "$EXCLUDE_DIRS" ]; then
@@ -501,7 +502,10 @@ function download_site() {
 	SECONDS=0;	# built-in var
 	$command;
 	status="$?";
-	# 8 => server error (e.g. 404) - which we ignore (for now!)
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "download_site::status $status";
+
+
+	# 8 := server error (e.g. 404) - which we ignore (for now!)
 	if [ 0 -ne "$status" ] && [ 8 -ne "$status" ]; then
 		tmp=$(seconds2time "$SECONDS");
 		echo "wget exited with code $status after $tmp" >> "$LOG_FILE";
