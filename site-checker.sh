@@ -86,7 +86,7 @@ function init() {
 	read_config_from_command_line "$@" || return 1;
 
 	# if TARGET missing or empty, exit
-	if [ '' = "$TARGET" ]; then
+	if [ -z "$TARGET" ]; then
 		echoerr "No target given";
 		echo_usage;
 		return 1;
@@ -147,7 +147,7 @@ function read_config_from_file() {
 
 
 	# if CONFIG_FILE missing or empty, return
-	if [ '' = "$CONFIG_FILE" ]; then
+	if [ -z "$CONFIG_FILE" ]; then
 		[ "$DEBUG_LEVEL" -ge "$DEBUG_DEFAULT" ] && echo "No config file selected; skipping";
 		return 0;
 	fi;
