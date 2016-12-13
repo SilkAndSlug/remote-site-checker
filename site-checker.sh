@@ -573,8 +573,8 @@ function seconds2time {
 #	None
 ########
 function main {
-	init "$@";
-	if [ 0 -ne "$?" ]; then return 1; fi;
+	init "$@" || return 1;
+
 
 	echo "";
 	echo "";
@@ -584,11 +584,10 @@ function main {
 	echo "";
 
 	if [ true == $DO_DOWNLOAD ]; then
-		login ;
-		if [ 0 -ne "$?" ]; then return 1; fi;
 
-		download_site ;
-		if [ 0 -ne "$?" ]; then return 1; fi;
+		login  || return 1;
+
+		download_site  || return 1;
 
 		fettle_log_file
 		if [ 0 -ne "$?" ]; then return 1; fi;
@@ -619,8 +618,7 @@ function main {
 			read -n1 -r -p "Press space to continue..." key ;
 		fi;
 
-		cat "$REPORT_FILE";
-		if [ 0 -ne "$?" ]; then return 1; fi;
+		cat "$REPORT_FILE" || return 1;
 
 		return 1;
 	fi;
