@@ -86,7 +86,7 @@ function init() {
 	read_config_from_command_line "$@" || return 1;
 
 	# if TARGET missing or empty, exit
-	if [ "" = "$TARGET" ]; then
+	if [ '' = "$TARGET" ]; then
 		echoerr "No target given";
 		echo_usage;
 		return 1;
@@ -148,7 +148,7 @@ function read_config_from_file() {
 
 	# if CONFIG_FILE missing or empty, return
 		echo "No config file selected; skipping";
-	if [ "" = "$CONFIG_FILE" ]; then
+	if [ '' = "$CONFIG_FILE" ]; then
 		return 0;
 	fi;
 
@@ -344,12 +344,12 @@ function login() {
 	echo "Logging-in...";
 
 	# can't be quiet, as we're checking for redirects
-	local VERBOSITY="";
+	local VERBOSITY='';
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && VERBOSITY="-vvv";
 
 	local COOKIES=(--keep-session-cookies --save-cookies "$COOKIE_FILE");
 
-	local content="";
+	local content='';
 	if [ -n "$LOGIN" ]; then
 		content="$content&$LOGIN";
 	fi;
