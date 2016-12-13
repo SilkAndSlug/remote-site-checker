@@ -33,33 +33,33 @@ readonly GREP_PARAMS=(-B 2 --exclude-dir=vendors/ --exclude-dir=silk/ --exclude-
 #debugging
 export DEBUG_LEVEL="$DEBUG_QUIET";
 
-export CONFIG_FILE="";
+export CONFIG_FILE='';
 
 # server
-export DOMAIN="";
-export TARGET="";
+export DOMAIN='';
+export TARGET='';
 
 # login to server
-export HTTP_LOGIN=("");	# must be populated
-export HTTP_PASSWORD="";
-export HTTP_USERNAME="";
+export HTTP_LOGIN=('');	# must be populated
+export HTTP_PASSWORD='';
+export HTTP_USERNAME='';
 
 # login to site
-export FORM="User/Login";
-export PASSWORD="";
-export USERNAME="";
-export LOGIN="";
-export EMAIL_ADDRESS=""
+export FORM='User/Login';
+export PASSWORD='';
+export USERNAME='';
+export LOGIN='';
+export EMAIL_ADDRESS=''
 
 # downloads
 export DO_DOWNLOAD=true;
-export EXCLUDE_DIRS="";
+export EXCLUDE_DIRS='';
 
 # output
-export OUTPUT_DIR="/tmp/site-checker";
-export LOG_FILE="";
-export REPORT_FILE="";
-export SITE_DIR="";
+export OUTPUT_DIR='/tmp/site-checker';
+export LOG_FILE='';
+export REPORT_FILE='';
+export SITE_DIR='';
 
 # post-processing
 export IS_CRONJOB=false;
