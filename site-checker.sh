@@ -654,24 +654,23 @@ function seconds2time() {
 #	None
 ########
 function main() {
+	## init vars
+	local is_okay status;
+
+
 	init "$@" || return 1;
 
 
-
-
-
+	## download the site
 	if [ true = $DO_DOWNLOAD ]; then
 		login  || return 1;
-
 		download_site  || return 1;
-
-		fettle_log_file
-		if [ 0 -ne "$?" ]; then return 1; fi;
+		fettle_log_file || return 1;
 	fi;
 
 
-	local is_okay=true;
-	local status;
+	## check site
+	is_okay=true;
 	if [ true = "$DO_CHECKING" ]; then
 		[ -f "$REPORT_FILE" ] && rm "$REPORT_FILE"; # empty report
 
