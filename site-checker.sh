@@ -10,8 +10,8 @@
 ## Bootstrap
 ################################################################################
 
-set -u;	# unset vars throw errors
-set -e;	# errors exit
+set -u;	## unset vars throw errors
+set -e;	## errors exit
 
 
 
@@ -45,7 +45,7 @@ export TARGET='';
 
 
 ## login to web-server (HTTP)
-export HTTP_LOGIN=('');	# must be populated
+export HTTP_LOGIN=('');	## must be populated
 export HTTP_PASSWORD='';
 export HTTP_USERNAME='';
 
@@ -100,7 +100,7 @@ function init() {
 
 	read_config_from_command_line "$@" || return 1;
 
-	# if TARGET missing or empty, exit
+	## if TARGET missing or empty, exit
 	if [ -z "$TARGET" ]; then
 		echoerr "No target given";
 		echo_usage;
@@ -146,14 +146,14 @@ function read_config_from_file() {
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "Reading config from file...";
 
 
-	# handle params
+	## handle params
 	while [ $# -gt 0 ]; do
 		key="$1";
 
 		case "$key" in
 			-c|--configuration )
 				CONFIG_FILE="$2";
-				shift;	# past argument
+				shift;	## past argument
 				;;
 		esac;
 		shift; # past argument
@@ -161,7 +161,7 @@ function read_config_from_file() {
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "CONFIG_FILE = $CONFIG_FILE";
 
 
-	# if CONFIG_FILE missing or empty, return
+	## if CONFIG_FILE missing or empty, return
 	if [ -z "$CONFIG_FILE" ]; then
 		[ "$DEBUG_LEVEL" -ge "$DEBUG_DEFAULT" ] && echo "No config file selected; skipping";
 		return 0;
@@ -173,7 +173,7 @@ function read_config_from_file() {
 	fi;
 
 
-	# shellcheck source=/home/silkandslug/site-checker/dev/demo.cfg
+	## shellcheck source=/home/silkandslug/site-checker/dev/demo.cfg
 	source "$CONFIG_FILE";
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "...okay";
 
@@ -186,14 +186,14 @@ function read_config_from_command_line() {
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "Reading config from command line...";
 
 
-	# handle params
+	## handle params
 	while [ $# -gt 0 ]; do
 		key="$1";
 
 		case "$key" in
 			-c|configuration )
-				# config file; skip
-				shift;	# past argument
+				## config file; skip
+				shift;	## past argument
 				;;
 
 			-cj|--cronjob )
@@ -202,17 +202,17 @@ function read_config_from_command_line() {
 
 			-d|--dir )
 				OUTPUT_DIR="$2";
-				shift;	# past argument
+				shift;	## past argument
 				;;
 
 			-e|--email )
 				EMAIL_ADDRESS="$2";
-				shift;	# past argument
+				shift;	## past argument
 				;;
 
 			-f|--form )
 				FORM="$2";
-				shift;	# past argument
+				shift;	## past argument
 				;;
 
 			--help )
@@ -222,22 +222,22 @@ function read_config_from_command_line() {
 
 			--http-password )
 				HTTP_PASSWORD="$2";
-				shift;	# past argument
+				shift;	## past argument
 				;;
 
 			--http-username )
 				HTTP_USERNAME="$2";
-				shift;	# past argument
+				shift;	## past argument
 				;;
 
 			-l|--login )
 				LOGIN="$2";
-				shift;	# past argument
+				shift;	## past argument
 				;;
 
 			-p|--password )
 				PASSWORD="$2";
-				shift;	# past argument
+				shift;	## past argument
 				;;
 
 			-nc|--no-checking )
@@ -250,17 +250,17 @@ function read_config_from_command_line() {
 
 			-u|--user )
 				USERNAME="$2";
-				shift;	# past argument
+				shift;	## past argument
 				;;
 
 			-v|--verbose )
-				# debugging++
+				## debugging++
 				DEBUG_LEVEL=$((DEBUG_LEVEL+1));
 				;;
 
 			-X|--exclude-directories )
 				EXCLUDE_DIRS="$2";
-				shift;	# past argument
+				shift;	## past argument
 				;;
 
 			* )
@@ -283,7 +283,7 @@ function read_config_from_command_line() {
 
 
 function extract_domain_from_target() {
-	# extract DOMAIN from TARGET
+	## extract DOMAIN from TARGET
 	DOMAIN=$(echo "$TARGET" | awk -F/ '{print $3}');
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "DOMAIN = $DOMAIN";
 
@@ -313,7 +313,7 @@ function update_internal_vars_with_config() {
 
 
 	## for wget
-	HTTP_LOGIN=('');	# must be populated
+	HTTP_LOGIN=('');	## must be populated
 	if [ -n "$HTTP_USERNAME" ] && [ -n "$HTTP_PASSWORD" ]; then
 		HTTP_LOGIN=(--auth-no-challenge --http-user="$HTTP_USERNAME" --http-password="$HTTP_PASSWORD");
 	fi;
@@ -381,7 +381,7 @@ function login() {
 
 	## config
 
-	# can't be quiet, as we're checking for redirects
+	## can't be quiet, as we're checking for redirects
 	verbosity='';
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && verbosity="-vvv";
 
@@ -426,16 +426,16 @@ function login() {
 	};
 
 
-	# did the form handle our login?
-	# grep returns 0 if found
+	## did the form handle our login?
+	## grep returns 0 if found
 	grep 'Location:' "$tmp_log" >/dev/null && {
 		echoerr "Failed to redirect after login to $FORM with ${login_clause[*]} [bad credentials?]; quitting";
 		return 1;
 	};
 
 
-	# did the form accept our login?
-	# grep returns 0 if found
+	## did the form accept our login?
+	## grep returns 0 if found
 	( grep 'Location:' "$tmp_log" | grep "$FORM" ) >/dev/null && {
 		echoerr "$FORM redirected to $FORM with ${LOGIN[*]} [bad credentials?]; quitting";
 		return 1;
@@ -497,12 +497,12 @@ function download_site() {
 
 	cookies=('--keep-session-cookies' "--load-cookies $COOKIE_FILE");
 
-	exclude_clause=('');	# must be populated
+	exclude_clause=('');	## must be populated
 	if [ ! -z "$EXCLUDE_DIRS" ]; then
 		exclude_clause=(--exclude-directories="$EXCLUDE_DIRS");
 	fi;
 
-	# wait 1sec, unless we're hitting the DEV server
+	## wait 1sec, unless we're hitting the DEV server
 	delay='--wait 1';
 	if [ 'dev.silkandslug.com' = "${DOMAIN,,}" ]; then
 		delay='';
@@ -510,7 +510,7 @@ function download_site() {
 
 
 	## assemble command
-	# --no-directories is a workaround for wget's 'pathconf: not a directory' error/bug
+	## --no-directories is a workaround for wget's 'pathconf: not a directory' error/bug
 	command="wget \
 		--directory-prefix $(dirname "$SITE_DIR") \
 		--adjust-extension \
@@ -531,13 +531,13 @@ function download_site() {
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "...starting crawl (this will take a while)...";
 
 
-	SECONDS=0;	# built-in var
+	SECONDS=0;	## built-in var
 	$command;
 	status="$?";
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "download_site::status $status";
 
 
-	# 8 := server error (e.g. 404) - which we ignore (for now!)
+	## 8 := server error (e.g. 404) - which we ignore (for now!)
 	if [ 0 -ne "$status" ] && [ 8 -ne "$status" ]; then
 		tmp=$(seconds2time "$SECONDS");
 		echo "wget exited with code $status after $tmp" >> "$LOG_FILE";
@@ -559,19 +559,19 @@ function fettle_log_file() {
 
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "Fettling log file...";
 
-	# strip lines
+	## strip lines
 	sed -i "s|Reusing existing connection to [^:]*:80\.||" "$LOG_FILE";
 
-	# strip times
+	## strip times
 	sed -i "s|--[^h]*||" "$LOG_FILE";
 
-	# strip text before error
+	## strip text before error
 	sed -i "s|HTTP request sent, awaiting response... ||" "$LOG_FILE";
 
-	# strip empty lines
+	## strip empty lines
 	sed -i 'n;d' "$LOG_FILE";
 
-	# add empty line after error
+	## add empty line after error
 	sed -i '/^[0-9]/G' "$LOG_FILE";
 
 
@@ -637,7 +637,7 @@ function check_for_PHP_errors() {
 	is_okay=true;
 
 
-	# grep returns 1 if nothing found
+	## grep returns 1 if nothing found
 	grep "${GREP_PARAMS[@]}" 'Fatal error: ' "$SITE_DIR" >> "$REPORT_FILE" && is_okay=false;
 
 	grep "${GREP_PARAMS[@]}" 'Error:</b>' "$SITE_DIR" >> "$REPORT_FILE" && is_okay=false;
@@ -777,7 +777,7 @@ function main() {
 	fi;
 
 
-	# tidy login page, if any
+	## tidy login page, if any
 	[ -f "$FORM" ] && rm "$FORM";
 
 
