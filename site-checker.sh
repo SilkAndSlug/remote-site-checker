@@ -10,8 +10,8 @@
 ## Bootstrap
 ################################################################################
 
-set -u;	# unset vars throw errors
-set -e;	# errors exit
+set -u;	## unset vars throw errors
+set -e;	## errors exit
 
 
 
@@ -21,7 +21,7 @@ set -e;	# errors exit
 
 source /home/silkandslug/bin/includes/definitions.sh;
 
-# recursive, 2 prior lines, ignore Silk-Framework, images, etc
+## recursive, 2 prior lines, ignore Silk-Framework, images, etc
 readonly GREP_PARAMS=(-B 2 --exclude-dir=vendors/ --exclude-dir=silk/ --exclude-dir=migrate/ --exclude-dir=export/ --exclude-dir=data/ --exclude-dir=images/ --exclude=*.jpg -r);
 
 
@@ -30,77 +30,57 @@ readonly GREP_PARAMS=(-B 2 --exclude-dir=vendors/ --exclude-dir=silk/ --exclude-
 ## Init vars
 ################################################################################
 
-#debugging
+
+## debugging
 export DEBUG_LEVEL="$DEBUG_DEFAULT";
 
+
+## init path to config
 export CONFIG_FILE='';
 
-# server
+
+## website to check
 export DOMAIN='';
 export TARGET='';
 
-# login to server
-export HTTP_LOGIN=('');	# must be populated
+
+## login to web-server (HTTP)
+export HTTP_LOGIN=('');	## must be populated
 export HTTP_PASSWORD='';
 export HTTP_USERNAME='';
 
-# login to site
+## login to site (web form)
 export FORM='User/Login';
 export PASSWORD='';
 export USERNAME='';
 export LOGIN='';
 export EMAIL_ADDRESS='';
 
-# downloads
+
+## are we crawling the site?
 export DO_DOWNLOAD=true;
 export EXCLUDE_DIRS='';
 
-# output
+
+## are we checking the crawl?
+export DO_CHECKING=true;
+
+
+## output
 export OUTPUT_DIR='/tmp/site-checker';
 export LOG_FILE='';
 export REPORT_FILE='';
 export SITE_DIR='';
 
-# post-processing
+
+## @var	IS_CRONJOB	bool	Toggle for unsupervised checking, e.g. via Cron
 export IS_CRONJOB=false;
-export DO_CHECKING=true;
 
 
 
 ################################################################################
 ## Functions
 ################################################################################
-
-
-function init() {
-	if [ $# -eq 0 ]; then
-		echo_usage;
-		return 1;
-	fi;
-
-
-	local status ;
-
-	read_config_from_file "$@" || return 1;
-
-	read_config_from_command_line "$@" || return 1;
-
-	# if TARGET missing or empty, exit
-	if [ -z "$TARGET" ]; then
-		echoerr "No target given";
-		echo_usage;
-		return 1;
-	fi;
-
-	extract_domain_from_target  || return 1;
-
-	update_internal_vars_with_config  || return 1;
-
-	init_dirs  || return 1;
-
-
-	return 0;
-}
 
 
 function echo_usage() {
@@ -124,21 +104,56 @@ function echo_usage() {
 	echo "Returns 1 on error, and 0 on success";
 
 	return 0;
-}
+}	## end function
+
+
+function init() {
+	if [ $# -eq 0 ]; then
+		echo_usage;
+		return 1;
+	fi;
+
+
+	## declare vars
+	local \
+		status \
+	;
+
+
+	read_config_from_file "$@" || return 1;
+
+	read_config_from_command_line "$@" || return 1;
+
+	## if TARGET missing or empty, exit
+	if [ -z "$TARGET" ]; then
+		echoerr "No target given";
+		echo_usage;
+		return 1;
+	fi;
+
+	extract_domain_from_target  || return 1;
+
+	update_internal_vars_with_config  || return 1;
+
+	init_dirs  || return 1;
+
+
+	return 0;
+}	## end function
 
 
 function read_config_from_file() {
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "Reading config from file...";
 
 
-	# handle params
+	## handle params
 	while [ $# -gt 0 ]; do
 		key="$1";
 
 		case "$key" in
 			-c|--configuration )
 				CONFIG_FILE="$2";
-				shift;	# past argument
+				shift;	## past argument
 				;;
 		esac;
 		shift; # past argument
@@ -146,7 +161,7 @@ function read_config_from_file() {
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "CONFIG_FILE = $CONFIG_FILE";
 
 
-	# if CONFIG_FILE missing or empty, return
+	## if CONFIG_FILE missing or empty, return
 	if [ -z "$CONFIG_FILE" ]; then
 		[ "$DEBUG_LEVEL" -ge "$DEBUG_DEFAULT" ] && echo "No config file selected; skipping";
 		return 0;
@@ -164,21 +179,21 @@ function read_config_from_file() {
 
 
 	return 0;
-}
+}	## end function
 
 
 function read_config_from_command_line() {
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "Reading config from command line...";
 
 
-	# handle params
+	## handle params
 	while [ $# -gt 0 ]; do
 		key="$1";
 
 		case "$key" in
 			-c|configuration )
-				# config file; skip
-				shift;	# past argument
+				## config file; skip
+				shift;	## past argument
 				;;
 
 			-cj|--cronjob )
@@ -187,17 +202,17 @@ function read_config_from_command_line() {
 
 			-d|--dir )
 				OUTPUT_DIR="$2";
-				shift;	# past argument
+				shift;	## past argument
 				;;
 
 			-e|--email )
 				EMAIL_ADDRESS="$2";
-				shift;	# past argument
+				shift;	## past argument
 				;;
 
 			-f|--form )
 				FORM="$2";
-				shift;	# past argument
+				shift;	## past argument
 				;;
 
 			--help )
@@ -207,22 +222,22 @@ function read_config_from_command_line() {
 
 			--http-password )
 				HTTP_PASSWORD="$2";
-				shift;	# past argument
+				shift;	## past argument
 				;;
 
 			--http-username )
 				HTTP_USERNAME="$2";
-				shift;	# past argument
+				shift;	## past argument
 				;;
 
 			-l|--login )
 				LOGIN="$2";
-				shift;	# past argument
+				shift;	## past argument
 				;;
 
 			-p|--password )
 				PASSWORD="$2";
-				shift;	# past argument
+				shift;	## past argument
 				;;
 
 			-nc|--no-checking )
@@ -235,17 +250,17 @@ function read_config_from_command_line() {
 
 			-u|--user )
 				USERNAME="$2";
-				shift;	# past argument
+				shift;	## past argument
 				;;
 
 			-v|--verbose )
-				# debugging++
+				## debugging++
 				DEBUG_LEVEL=$((DEBUG_LEVEL+1));
 				;;
 
 			-X|--exclude-directories )
 				EXCLUDE_DIRS="$2";
-				shift;	# past argument
+				shift;	## past argument
 				;;
 
 			* )
@@ -264,16 +279,16 @@ function read_config_from_command_line() {
 
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "...okay";
 	return 0;
-}
+}	## end function
 
 
 function extract_domain_from_target() {
-	# extract DOMAIN from TARGET
+	## extract DOMAIN from TARGET
 	DOMAIN=$(echo "$TARGET" | awk -F/ '{print $3}');
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "DOMAIN = $DOMAIN";
 
 	return 0;
-}
+}	## end function
 
 
 
@@ -298,7 +313,7 @@ function update_internal_vars_with_config() {
 
 
 	## for wget
-	HTTP_LOGIN=('');	# must be populated
+	HTTP_LOGIN=('');	## must be populated
 	if [ -n "$HTTP_USERNAME" ] && [ -n "$HTTP_PASSWORD" ]; then
 		HTTP_LOGIN=(--auth-no-challenge --http-user="$HTTP_USERNAME" --http-password="$HTTP_PASSWORD");
 	fi;
@@ -312,7 +327,7 @@ function update_internal_vars_with_config() {
 
 
 	return 0;
-}
+}	## end function
 
 
 
@@ -343,23 +358,51 @@ function init_dirs() {
 
 
 	return 0;
-}
+}	## end function
 
 
-function login() {
+
+########
+# Logs-in to website
+#
+# Globals
+#	COOKIE_FILE		Where to store cookie
+#	EMAIL_ADDRESS	Login credential
+#	FORM			URL of login page, relative to $TARGET
+#	HTTP_LOGIN		List of params for HTTP login
+#	LOGIN			Login credential
+#	PASSWORD		Login credential
+#	SITE_DIR		Prefix for output files
+#	TARGET			Site's root URL
+#	USERNAME		Login credential
+#
+# Arguments
+#	None
+#
+# Returns
+#	None
+########
+function login_to_site() {
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "site-checker::login";
 
 
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "Logging-in...";
 
 
-	## init vars
-	local command content cookies login_clause tmp_log verbosity;
+	## declare vars
+	local \
+		command \
+		content \
+		cookies \
+		login_clause \
+		tmp_log \
+		verbosity \
+	;
 
 
 	## config
 
-	# can't be quiet, as we're checking for redirects
+	## can't be quiet, as we're checking for redirects
 	verbosity='';
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && verbosity="-vvv";
 
@@ -404,16 +447,16 @@ function login() {
 	};
 
 
-	# did the form handle our login?
-	# grep returns 0 if found
+	## did the form handle our login?
+	## grep returns 0 if found
 	grep 'Location:' "$tmp_log" >/dev/null && {
 		echoerr "Failed to redirect after login to $FORM with ${login_clause[*]} [bad credentials?]; quitting";
 		return 1;
 	};
 
 
-	# did the form accept our login?
-	# grep returns 0 if found
+	## did the form accept our login?
+	## grep returns 0 if found
 	( grep 'Location:' "$tmp_log" | grep "$FORM" ) >/dev/null && {
 		echoerr "$FORM redirected to $FORM with ${LOGIN[*]} [bad credentials?]; quitting";
 		return 1;
@@ -422,7 +465,7 @@ function login() {
 
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "...okay";
 	return 0;
-}
+}	## end function
 
 
 
@@ -456,8 +499,17 @@ function download_site() {
 	fi;
 
 
-	## init vars
-	local command cookies delay exclude_clause log mirror status tmp;
+	## declare vars
+	local \
+		command \
+		cookies \
+		delay \
+		exclude_clause \
+		log \
+		mirror \
+		status \
+		tmp \
+	;
 
 
 	## config
@@ -466,12 +518,12 @@ function download_site() {
 
 	cookies=('--keep-session-cookies' "--load-cookies $COOKIE_FILE");
 
-	exclude_clause=('');	# must be populated
+	exclude_clause=('');	## must be populated
 	if [ ! -z "$EXCLUDE_DIRS" ]; then
 		exclude_clause=(--exclude-directories="$EXCLUDE_DIRS");
 	fi;
 
-	# wait 1sec, unless we're hitting the DEV server
+	## wait 1sec, unless we're hitting the DEV server
 	delay='--wait 1';
 	if [ 'dev.silkandslug.com' = "${DOMAIN,,}" ]; then
 		delay='';
@@ -479,7 +531,7 @@ function download_site() {
 
 
 	## assemble command
-	# --no-directories is a workaround for wget's 'pathconf: not a directory' error/bug
+	## --no-directories is a workaround for wget's 'pathconf: not a directory' error/bug
 	command="wget \
 		--directory-prefix $(dirname "$SITE_DIR") \
 		--adjust-extension \
@@ -500,13 +552,13 @@ function download_site() {
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "...starting crawl (this will take a while)...";
 
 
-	SECONDS=0;	# built-in var
+	SECONDS=0;	## built-in var
 	$command;
 	status="$?";
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "download_site::status $status";
 
 
-	# 8 := server error (e.g. 404) - which we ignore (for now!)
+	## 8 := server error (e.g. 404) - which we ignore (for now!)
 	if [ 0 -ne "$status" ] && [ 8 -ne "$status" ]; then
 		tmp=$(seconds2time "$SECONDS");
 		echo "wget exited with code $status after $tmp" >> "$LOG_FILE";
@@ -520,7 +572,7 @@ function download_site() {
 
 
 	return 0;
-}
+}	## end function
 
 
 function fettle_log_file() {
@@ -528,56 +580,66 @@ function fettle_log_file() {
 
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "Fettling log file...";
 
-	# strip lines
+	## strip lines
 	sed -i "s|Reusing existing connection to [^:]*:80\.||" "$LOG_FILE";
 
-	# strip times
+	## strip times
 	sed -i "s|--[^h]*||" "$LOG_FILE";
 
-	# strip text before error
+	## strip text before error
 	sed -i "s|HTTP request sent, awaiting response... ||" "$LOG_FILE";
 
-	# strip empty lines
+	## strip empty lines
 	sed -i 'n;d' "$LOG_FILE";
 
-	# add empty line after error
+	## add empty line after error
 	sed -i '/^[0-9]/G' "$LOG_FILE";
 
 
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "...done";
 
 	return 0;
-}
+}	## end function
 
 
 function check_for_HTTP_errors() {
+	## output
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "site-checker::check_for_HTTP_errors";
-
-
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "Checking for HTTP errors...";
 
 
-	# output [45]xx errors to tmp file
-	grep -B 2 'awaiting response... [45]' "$LOG_FILE" >> "$REPORT_FILE" 2>&1;
-	local status=$?;
+	## declare
+	local \
+		status \
+	;
 
-	# grep exits 0 if found
-	if [ "$status" -eq 0 ]; then 
+
+	## output [45]xx errors to tmp file
+	grep -B 2 'awaiting response... [45]' "$LOG_FILE" >> "$REPORT_FILE" 2>&1;
+	status=$?;
+
+
+	## grep exits 0 if found
+	if [ 0 -eq "$status" ]; then
 		echoerr "Found 45x errors; quitting";
 		return 2; 
 	fi;
 
-	# grep exits 1 if not found
-	if [ "$status" -ne 1 ]; then 
+
+	## grep exits 1 if not found
+	if [ 1 -ne "$status" ]; then
 		echoerr "Couldn't check for HTTP errors; quitting";
 		return 1; 
 	fi;
 
 
+	## output
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "...okay";
 
+
+	## tidy & quit
 	return 0;
-}
+}	## end function
 
 
 function check_for_PHP_errors() {
@@ -585,9 +647,18 @@ function check_for_PHP_errors() {
 
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "Checking for PHP errors..."
 
-	local is_okay=true;
 
-	# grep returns 1 if nothing found
+	## declare vars
+	local \
+		is_okay \
+	;
+
+
+	## init vars
+	is_okay=true;
+
+
+	## grep returns 1 if nothing found
 	grep "${GREP_PARAMS[@]}" 'Fatal error: ' "$SITE_DIR" >> "$REPORT_FILE" && is_okay=false;
 
 	grep "${GREP_PARAMS[@]}" 'Error:</b>' "$SITE_DIR" >> "$REPORT_FILE" && is_okay=false;
@@ -599,7 +670,7 @@ function check_for_PHP_errors() {
 	grep "${GREP_PARAMS[@]}" 'Strict Standards: ' "$SITE_DIR" >> "$REPORT_FILE" && is_okay=false;
 
 
-	if [ false = "$is_okay" ]; then
+	if ! "$is_okay" ; then
 		echoerr "Found PHP errors; quitting";
 		return 2;
 	fi;
@@ -608,7 +679,7 @@ function check_for_PHP_errors() {
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "...okay";
 
 	return 0;
-}
+}	## end function
 
 
 function check_for_PHPTAL_errors() {
@@ -616,12 +687,21 @@ function check_for_PHPTAL_errors() {
 
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "Checking for PHPTAL error-strings..."
 
-	local is_okay=true;
+
+	## declare vars
+	local \
+		is_okay \
+	;
+
+
+	## init vars
+	is_okay=true;
+
 
 	grep "${GREP_PARAMS[@]}" 'Error: ' "$SITE_DIR" >> "$REPORT_FILE" && is_okay=false;
 
 
-	if [ false = "$is_okay" ]; then
+	if ! "$is_okay" ; then
 		echoerr "Found PHPTAL error-strings; quitting";
 		return 2;
 	fi;
@@ -630,7 +710,7 @@ function check_for_PHPTAL_errors() {
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "...okay";
 
 	return 0;
-}
+}	## end function
 
 
 function seconds2time() {
@@ -653,7 +733,7 @@ function seconds2time() {
 	printf '%d days %02d:%02d:%02d' $D $H $M $S;
 
 	return 0;
-}
+}	## end function
 
 
 
@@ -675,36 +755,41 @@ function seconds2time() {
 #	None
 ########
 function main() {
-	## init vars
-	local is_okay status;
+	## declare vars
+	local \
+		ERROR_COUNT \
+		is_okay \
+		status \
+	;
 
 
+	## read config, etc
 	init "$@" || return 1;
 
 
 	## download the site
-	if [ true = $DO_DOWNLOAD ]; then
-		login  || return 1;
-		download_site  || return 1;
-		fettle_log_file || return 1;
+	if $DO_DOWNLOAD ; then
+		login_to_site	|| return 1;
+		download_site	|| return 1;
+		fettle_log_file	|| return 1;
 	fi;
 
 
 	## check site
 	is_okay=true;
-	if [ true = "$DO_CHECKING" ]; then
+	if $DO_CHECKING ; then
 		[ -f "$REPORT_FILE" ] && rm "$REPORT_FILE"; # empty report
 
-		check_for_HTTP_errors || is_okay=false;
-		check_for_PHP_errors || is_okay=false;
-		check_for_PHPTAL_errors || is_okay=false;
+		check_for_HTTP_errors	|| is_okay=false;
+		check_for_PHP_errors	|| is_okay=false;
+		check_for_PHPTAL_errors	|| is_okay=false;
 	fi;
 
-	if [ false = "$is_okay" ]; then
-		local ERROR_COUNT=$(( $(wc -l < "$REPORT_FILE") / 3 ));
+	if ! $is_okay ; then
+		ERROR_COUNT=$(( $(wc -l < "$REPORT_FILE") / 3 ));
 		echoerr "Found $ERROR_COUNT errors";
 
-		if [ false = $IS_CRONJOB ]; then
+		if ! $IS_CRONJOB ; then
 			read -n1 -r -p "Press space to continue..." key ;
 		fi;
 
@@ -714,12 +799,12 @@ function main() {
 	fi;
 
 
-	# tidy login page, if any
+	## tidy login page, if any
 	[ -f "$FORM" ] && rm "$FORM";
 
 
 	return 0;
-}
+}	## end function
 
 
 
