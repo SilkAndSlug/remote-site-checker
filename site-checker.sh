@@ -566,7 +566,7 @@ function check_for_HTTP_errors() {
 
 
 	## grep exits 0 if found
-	if [ "$status" -eq 0 ]; then 
+	if [ 0 -eq "$status" ]; then
 		echoerr "Found 45x errors; quitting";
 		return 2; 
 	fi;
