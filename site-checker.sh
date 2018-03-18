@@ -556,9 +556,13 @@ function check_for_HTTP_errors() {
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "Checking for HTTP errors...";
 
 
+	## declare
+	local status;
+
+
 	## output [45]xx errors to tmp file
 	grep -B 2 'awaiting response... [45]' "$LOG_FILE" >> "$REPORT_FILE" 2>&1;
-	local status=$?;
+	status=$?;
 
 
 	## grep exits 0 if found
