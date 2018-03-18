@@ -267,7 +267,7 @@ function read_config_from_command_line() {
 				DO_CHECKING=false;
 				;;
 
-			-nd|--no-download )
+			-nd|--no-download|--no-downloading )
 				DO_DOWNLOAD=false;
 				;;
 
