@@ -573,7 +573,7 @@ function check_for_HTTP_errors() {
 
 
 	## grep exits 1 if not found
-	if [ "$status" -ne 1 ]; then 
+	if [ 1 -ne "$status" ]; then
 		echoerr "Couldn't check for HTTP errors; quitting";
 		return 1; 
 	fi;
