@@ -294,6 +294,14 @@ function extract_domain_from_target() {
 	DOMAIN=$(echo "$TARGET" | awk -F/ '{print $3}');
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "DOMAIN = $DOMAIN";
 
+
+	## check output
+	if [ -z "$DOMAIN" ]; then
+		echoerr "\$DOMAIN must be a valid string; quitting";
+		return 1;
+	fi;
+
+
 	return 0;
 }	## end function
 
