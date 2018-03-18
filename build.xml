@@ -2,7 +2,7 @@
 
 
 <project
-	name="SiteChekcer"
+	name="SiteChecker"
 	default="list-targets"
 	description="Localised wrapper for SilkAndSlug-style project automation"
 >
