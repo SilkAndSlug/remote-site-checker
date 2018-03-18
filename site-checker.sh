@@ -90,7 +90,11 @@ function init() {
 	fi;
 
 
-	local status ;
+	## declare vars
+	local \
+		status \
+	;
+
 
 	read_config_from_file "$@" || return 1;
 
@@ -364,8 +368,15 @@ function login() {
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "Logging-in...";
 
 
-	## init vars
-	local command content cookies login_clause tmp_log verbosity;
+	## declare vars
+	local \
+		command \
+		content \
+		cookies \
+		login_clause \
+		tmp_log \
+		verbosity \
+	;
 
 
 	## config
@@ -467,8 +478,17 @@ function download_site() {
 	fi;
 
 
-	## init vars
-	local command cookies delay exclude_clause log mirror status tmp;
+	## declare vars
+	local \
+		command \
+		cookies \
+		delay \
+		exclude_clause \
+		log \
+		mirror \
+		status \
+		tmp \
+	;
 
 
 	## config
@@ -568,7 +588,9 @@ function check_for_HTTP_errors() {
 
 
 	## declare
-	local status;
+	local \
+		status \
+	;
 
 
 	## output [45]xx errors to tmp file
@@ -604,7 +626,16 @@ function check_for_PHP_errors() {
 
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "Checking for PHP errors..."
 
-	local is_okay=true;
+
+	## declare vars
+	local \
+		is_okay \
+	;
+
+
+	## init vars
+	is_okay=true;
+
 
 	# grep returns 1 if nothing found
 	grep "${GREP_PARAMS[@]}" 'Fatal error: ' "$SITE_DIR" >> "$REPORT_FILE" && is_okay=false;
@@ -635,7 +666,16 @@ function check_for_PHPTAL_errors() {
 
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "Checking for PHPTAL error-strings..."
 
-	local is_okay=true;
+
+	## declare vars
+	local \
+		is_okay \
+	;
+
+
+	## init vars
+	is_okay=true;
+
 
 	grep "${GREP_PARAMS[@]}" 'Error: ' "$SITE_DIR" >> "$REPORT_FILE" && is_okay=false;
 
@@ -694,8 +734,12 @@ function seconds2time() {
 #	None
 ########
 function main() {
-	## init vars
-	local is_okay status;
+	## declare vars
+	local \
+		ERROR_COUNT \
+		is_okay \
+		status \
+	;
 
 
 	init "$@" || return 1;
@@ -720,7 +764,7 @@ function main() {
 	fi;
 
 	if ! $is_okay ; then
-		local ERROR_COUNT=$(( $(wc -l < "$REPORT_FILE") / 3 ));
+		ERROR_COUNT=$(( $(wc -l < "$REPORT_FILE") / 3 ));
 		echoerr "Found $ERROR_COUNT errors";
 
 		if ! $IS_CRONJOB ; then
