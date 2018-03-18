@@ -115,7 +115,7 @@ function init() {
 
 
 	return 0;
-}
+}	## end function
 
 
 function echo_usage() {
@@ -139,7 +139,7 @@ function echo_usage() {
 	echo "Returns 1 on error, and 0 on success";
 
 	return 0;
-}
+}	## end function
 
 
 function read_config_from_file() {
@@ -179,7 +179,7 @@ function read_config_from_file() {
 
 
 	return 0;
-}
+}	## end function
 
 
 function read_config_from_command_line() {
@@ -279,7 +279,7 @@ function read_config_from_command_line() {
 
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "...okay";
 	return 0;
-}
+}	## end function
 
 
 function extract_domain_from_target() {
@@ -288,7 +288,7 @@ function extract_domain_from_target() {
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "DOMAIN = $DOMAIN";
 
 	return 0;
-}
+}	## end function
 
 
 
@@ -327,7 +327,7 @@ function update_internal_vars_with_config() {
 
 
 	return 0;
-}
+}	## end function
 
 
 
@@ -358,7 +358,7 @@ function init_dirs() {
 
 
 	return 0;
-}
+}	## end function
 
 
 function login() {
@@ -444,7 +444,7 @@ function login() {
 
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "...okay";
 	return 0;
-}
+}	## end function
 
 
 
@@ -551,7 +551,7 @@ function download_site() {
 
 
 	return 0;
-}
+}	## end function
 
 
 function fettle_log_file() {
@@ -578,7 +578,7 @@ function fettle_log_file() {
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "...done";
 
 	return 0;
-}
+}	## end function
 
 
 function check_for_HTTP_errors() {
@@ -658,7 +658,7 @@ function check_for_PHP_errors() {
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "...okay";
 
 	return 0;
-}
+}	## end function
 
 
 function check_for_PHPTAL_errors() {
@@ -689,7 +689,7 @@ function check_for_PHPTAL_errors() {
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "...okay";
 
 	return 0;
-}
+}	## end function
 
 
 function seconds2time() {
@@ -712,7 +712,7 @@ function seconds2time() {
 	printf '%d days %02d:%02d:%02d' $D $H $M $S;
 
 	return 0;
-}
+}	## end function
 
 
 
@@ -782,7 +782,7 @@ function main() {
 
 
 	return 0;
-}
+}	## end function
 
 
 
