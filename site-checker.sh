@@ -320,7 +320,7 @@ function extract_domain_from_target() {
 
 	## check output
 	if [ -z "$DOMAIN" ]; then
-		echoerr "\$DOMAIN must be a valid string; quitting";
+		echoerr "Failed to extract \$DOMAIN from \$TARGET ($TARGET); quitting";
 		return 1;
 	fi;
 
