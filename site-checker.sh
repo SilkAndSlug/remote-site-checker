@@ -607,7 +607,7 @@ function check_for_PHP_errors() {
 	grep "${GREP_PARAMS[@]}" 'Strict Standards: ' "$SITE_DIR" >> "$REPORT_FILE" && is_okay=false;
 
 
-	if [ false = "$is_okay" ]; then
+	if ! "$is_okay" ; then
 		echoerr "Found PHP errors; quitting";
 		return 2;
 	fi;
@@ -629,7 +629,7 @@ function check_for_PHPTAL_errors() {
 	grep "${GREP_PARAMS[@]}" 'Error: ' "$SITE_DIR" >> "$REPORT_FILE" && is_okay=false;
 
 
-	if [ false = "$is_okay" ]; then
+	if ! "$is_okay" ; then
 		echoerr "Found PHPTAL error-strings; quitting";
 		return 2;
 	fi;
@@ -691,7 +691,7 @@ function main() {
 
 
 	## download the site
-	if [ true = $DO_DOWNLOAD ]; then
+	if $DO_DOWNLOAD ; then
 		login  || return 1;
 		download_site  || return 1;
 		fettle_log_file || return 1;
@@ -700,7 +700,7 @@ function main() {
 
 	## check site
 	is_okay=true;
-	if [ true = "$DO_CHECKING" ]; then
+	if $DO_CHECKING ; then
 		[ -f "$REPORT_FILE" ] && rm "$REPORT_FILE"; # empty report
 
 		check_for_HTTP_errors || is_okay=false;
@@ -708,11 +708,11 @@ function main() {
 		check_for_PHPTAL_errors || is_okay=false;
 	fi;
 
-	if [ false = "$is_okay" ]; then
+	if ! $is_okay ; then
 		local ERROR_COUNT=$(( $(wc -l < "$REPORT_FILE") / 3 ));
 		echoerr "Found $ERROR_COUNT errors";
 
-		if [ false = $IS_CRONJOB ]; then
+		if ! $IS_CRONJOB ; then
 			read -n1 -r -p "Press space to continue..." key ;
 		fi;
 
