@@ -769,9 +769,9 @@ function main() {
 
 	## download the site
 	if $DO_DOWNLOAD ; then
-		login_to_site  || return 1;
-		download_site  || return 1;
-		fettle_log_file || return 1;
+		login_to_site	|| return 1;
+		download_site	|| return 1;
+		fettle_log_file	|| return 1;
 	fi;
 
 
