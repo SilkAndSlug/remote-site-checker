@@ -120,16 +120,33 @@ function init() {
 	;
 
 
+
+	########
+	## get config
+	########
+
 	read_config_from_file "$@" || return 1;
 
 	read_config_from_command_line "$@" || return 1;
 
+
+
+	########
+	## test config
+	########
+
+
 	## if TARGET missing or empty, exit
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "init::TARGET $TARGET";
 	if [ -z "$TARGET" ]; then
 		echoerr "No target given";
 		echo_usage;
 		return 1;
 	fi;
+
+
+	########
+
 
 	extract_domain_from_target  || return 1;
 
@@ -186,6 +203,12 @@ function read_config_from_command_line() {
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "Reading config from command line...";
 
 
+	## declare vars
+	local \
+		key \
+	;
+
+
 	## handle params
 	while [ $# -gt 0 ]; do
 		key="$1";
@@ -240,11 +263,11 @@ function read_config_from_command_line() {
 				shift;	## past argument
 				;;
 
-			-nc|--no-checking )
+			-nc|--no-check|--no-checking )
 				DO_CHECKING=false;
 				;;
 
-			-nd|--no-download )
+			-nd|--no-download|--no-downloading )
 				DO_DOWNLOAD=false;
 				;;
 
@@ -283,9 +306,24 @@ function read_config_from_command_line() {
 
 
 function extract_domain_from_target() {
+	## check input
+	if [ -z "$TARGET" ]; then
+		echoerr "\$TARGET must be a valid string; quitting";
+		return 1;
+	fi;
+
+
 	## extract DOMAIN from TARGET
 	DOMAIN=$(echo "$TARGET" | awk -F/ '{print $3}');
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "DOMAIN = $DOMAIN";
+
+
+	## check output
+	if [ -z "$DOMAIN" ]; then
+		echoerr "Failed to extract \$DOMAIN from \$TARGET ($TARGET); quitting";
+		return 1;
+	fi;
+
 
 	return 0;
 }	## end function
@@ -612,6 +650,13 @@ function check_for_HTTP_errors() {
 	local \
 		status \
 	;
+
+
+	## test for error
+	if [ "$LOG_FILE" == "$REPORT_FILE" ]; then
+		echoerr "LOG_FILE is the same as REPORT_FILE; skipping";
+		return 1;
+	fi;
 
 
 	## output [45]xx errors to tmp file
