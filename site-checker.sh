@@ -83,6 +83,30 @@ export IS_CRONJOB=false;
 ################################################################################
 
 
+function echo_usage() {
+	echo "Usage: $(basename "$0") [OPTIONS] [TARGET]";
+	echo;
+	echo "TARGET should be a URL, including protocol";
+	echo;
+	echo "-c|--configuration	Path to config file";
+	echo "-cj|--cronjob		Caller is a cronjob; run script non-interactively";
+	echo "-d|--dir		Directory to hold generated files; defaults to /tmp/site-checker";
+	echo "-f|--form		URL for login form, relative to TARGET; defaults to User/Login";
+	echo "-u|--user		username for login form";
+	echo "--http-username		HTTP-login for TARGET";
+	echo "--http-password		HTTP-login for TARGET";
+	echo "-p|--password		Password for login form";
+	echo "-X|--exclude-directories		Comma-separated(?) list of /directories/ to NOT crawl";
+	echo "-nc|--no-checking		Don't refresh the report; output previous report";
+	echo "-nd|--no-download		Don't refresh the download; check previous downloads";
+	echo "-v increase verbosity (-v = info; -vv = verbose; -vvv = debug)";
+	echo;
+	echo "Returns 1 on error, and 0 on success";
+
+	return 0;
+}	## end function
+
+
 function init() {
 	if [ $# -eq 0 ]; then
 		echo_usage;
@@ -113,30 +137,6 @@ function init() {
 
 	init_dirs  || return 1;
 
-
-	return 0;
-}	## end function
-
-
-function echo_usage() {
-	echo "Usage: $(basename "$0") [OPTIONS] [TARGET]";
-	echo;
-	echo "TARGET should be a URL, including protocol";
-	echo;
-	echo "-c|--configuration	Path to config file";
-	echo "-cj|--cronjob		Caller is a cronjob; run script non-interactively";
-	echo "-d|--dir		Directory to hold generated files; defaults to /tmp/site-checker";
-	echo "-f|--form		URL for login form, relative to TARGET; defaults to User/Login";
-	echo "-u|--user		username for login form";
-	echo "--http-username		HTTP-login for TARGET";
-	echo "--http-password		HTTP-login for TARGET";
-	echo "-p|--password		Password for login form";
-	echo "-X|--exclude-directories		Comma-separated(?) list of /directories/ to NOT crawl";
-	echo "-nc|--no-checking		Don't refresh the report; output previous report";
-	echo "-nd|--no-download		Don't refresh the download; check previous downloads";
-	echo "-v increase verbosity (-v = info; -vv = verbose; -vvv = debug)";
-	echo;
-	echo "Returns 1 on error, and 0 on success";
 
 	return 0;
 }	## end function
