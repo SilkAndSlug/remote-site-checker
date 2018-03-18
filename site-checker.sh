@@ -780,9 +780,9 @@ function main() {
 	if $DO_CHECKING ; then
 		[ -f "$REPORT_FILE" ] && rm "$REPORT_FILE"; # empty report
 
-		check_for_HTTP_errors || is_okay=false;
-		check_for_PHP_errors || is_okay=false;
-		check_for_PHPTAL_errors || is_okay=false;
+		check_for_HTTP_errors	|| is_okay=false;
+		check_for_PHP_errors	|| is_okay=false;
+		check_for_PHPTAL_errors	|| is_okay=false;
 	fi;
 
 	if ! $is_okay ; then
