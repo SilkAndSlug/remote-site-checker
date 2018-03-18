@@ -158,6 +158,7 @@ function read_config_from_file() {
 	fi;
 
 
+	# shellcheck source=/home/silkandslug/site-checker/dev/demo.cfg
 	source "$CONFIG_FILE";
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "...okay";
 
