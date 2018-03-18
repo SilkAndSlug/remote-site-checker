@@ -283,6 +283,13 @@ function read_config_from_command_line() {
 
 
 function extract_domain_from_target() {
+	## check input
+	if [ -z "$TARGET" ]; then
+		echoerr "\$TARGET must be a valid string; quitting";
+		return 1;
+	fi;
+
+
 	## extract DOMAIN from TARGET
 	DOMAIN=$(echo "$TARGET" | awk -F/ '{print $3}');
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "DOMAIN = $DOMAIN";
