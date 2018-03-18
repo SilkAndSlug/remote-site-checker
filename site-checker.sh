@@ -361,6 +361,27 @@ function init_dirs() {
 }	## end function
 
 
+
+########
+# Logs-in to website
+#
+# Globals
+#	COOKIE_FILE		Where to store cookie
+#	EMAIL_ADDRESS	Login credential
+#	FORM			URL of login page, relative to $TARGET
+#	HTTP_LOGIN		List of params for HTTP login
+#	LOGIN			Login credential
+#	PASSWORD		Login credential
+#	SITE_DIR		Prefix for output files
+#	TARGET			Site's root URL
+#	USERNAME		Login credential
+#
+# Arguments
+#	None
+#
+# Returns
+#	None
+########
 function login() {
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "site-checker::login";
 
