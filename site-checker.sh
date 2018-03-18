@@ -742,6 +742,7 @@ function main() {
 	;
 
 
+	## read config, etc
 	init "$@" || return 1;
 
 
