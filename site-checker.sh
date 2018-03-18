@@ -120,16 +120,33 @@ function init() {
 	;
 
 
+
+	########
+	## get config
+	########
+
 	read_config_from_file "$@" || return 1;
 
 	read_config_from_command_line "$@" || return 1;
 
+
+
+	########
+	## test config
+	########
+
+
 	## if TARGET missing or empty, exit
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "init::TARGET $TARGET";
 	if [ -z "$TARGET" ]; then
 		echoerr "No target given";
 		echo_usage;
 		return 1;
 	fi;
+
+
+	########
+
 
 	extract_domain_from_target  || return 1;
 
