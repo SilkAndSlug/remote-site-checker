@@ -382,7 +382,7 @@ function init_dirs() {
 # Returns
 #	None
 ########
-function login() {
+function login_to_site() {
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "site-checker::login";
 
 
@@ -769,7 +769,7 @@ function main() {
 
 	## download the site
 	if $DO_DOWNLOAD ; then
-		login  || return 1;
+		login_to_site  || return 1;
 		download_site  || return 1;
 		fettle_log_file || return 1;
 	fi;
