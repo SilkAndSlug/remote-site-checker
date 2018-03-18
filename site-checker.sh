@@ -21,7 +21,7 @@ set -e;	# errors exit
 
 source /home/silkandslug/bin/includes/definitions.sh;
 
-# recursive, 2 prior lines, ignore Silk-Framework, images, etc
+## recursive, 2 prior lines, ignore Silk-Framework, images, etc
 readonly GREP_PARAMS=(-B 2 --exclude-dir=vendors/ --exclude-dir=silk/ --exclude-dir=migrate/ --exclude-dir=export/ --exclude-dir=data/ --exclude-dir=images/ --exclude=*.jpg -r);
 
 
@@ -30,40 +30,51 @@ readonly GREP_PARAMS=(-B 2 --exclude-dir=vendors/ --exclude-dir=silk/ --exclude-
 ## Init vars
 ################################################################################
 
-#debugging
+
+## debugging
 export DEBUG_LEVEL="$DEBUG_DEFAULT";
 
+
+## init path to config
 export CONFIG_FILE='';
 
-# server
+
+## website to check
 export DOMAIN='';
 export TARGET='';
 
-# login to server
+
+## login to web-server (HTTP)
 export HTTP_LOGIN=('');	# must be populated
 export HTTP_PASSWORD='';
 export HTTP_USERNAME='';
 
-# login to site
+## login to site (web form)
 export FORM='User/Login';
 export PASSWORD='';
 export USERNAME='';
 export LOGIN='';
 export EMAIL_ADDRESS='';
 
-# downloads
+
+## are we crawling the site?
 export DO_DOWNLOAD=true;
 export EXCLUDE_DIRS='';
 
-# output
+
+## are we checking the crawl?
+export DO_CHECKING=true;
+
+
+## output
 export OUTPUT_DIR='/tmp/site-checker';
 export LOG_FILE='';
 export REPORT_FILE='';
 export SITE_DIR='';
 
-# post-processing
+
+## @var	IS_CRONJOB	bool	Toggle for unsupervised checking, e.g. via Cron
 export IS_CRONJOB=false;
-export DO_CHECKING=true;
 
 
 
