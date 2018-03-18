@@ -263,7 +263,7 @@ function read_config_from_command_line() {
 				shift;	## past argument
 				;;
 
-			-nc|--no-checking )
+			-nc|--no-check|--no-checking )
 				DO_CHECKING=false;
 				;;
 
