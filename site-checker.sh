@@ -203,6 +203,12 @@ function read_config_from_command_line() {
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "Reading config from command line...";
 
 
+	## declare vars
+	local \
+		key \
+	;
+
+
 	## handle params
 	while [ $# -gt 0 ]; do
 		key="$1";
