@@ -551,33 +551,37 @@ function fettle_log_file() {
 
 
 function check_for_HTTP_errors() {
+	## output
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "site-checker::check_for_HTTP_errors";
-
-
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "Checking for HTTP errors...";
 
 
-	# output [45]xx errors to tmp file
+	## output [45]xx errors to tmp file
 	grep -B 2 'awaiting response... [45]' "$LOG_FILE" >> "$REPORT_FILE" 2>&1;
 	local status=$?;
 
-	# grep exits 0 if found
+
+	## grep exits 0 if found
 	if [ "$status" -eq 0 ]; then 
 		echoerr "Found 45x errors; quitting";
 		return 2; 
 	fi;
 
-	# grep exits 1 if not found
+
+	## grep exits 1 if not found
 	if [ "$status" -ne 1 ]; then 
 		echoerr "Couldn't check for HTTP errors; quitting";
 		return 1; 
 	fi;
 
 
+	## output
 	[ "$DEBUG_LEVEL" -ge "$DEBUG_INFO" ] && echo "...okay";
 
+
+	## tidy & quit
 	return 0;
-}
+}	## end function
 
 
 function check_for_PHP_errors() {
