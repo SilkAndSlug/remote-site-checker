@@ -614,6 +614,13 @@ function check_for_HTTP_errors() {
 	;
 
 
+	## test for error
+	if [ "$LOG_FILE" == "$REPORT_FILE" ]; then
+		echoerr "LOG_FILE is the same as REPORT_FILE; skipping";
+		return 1;
+	fi;
+
+
 	## output [45]xx errors to tmp file
 	grep -B 2 'awaiting response... [45]' "$LOG_FILE" >> "$REPORT_FILE" 2>&1;
 	status=$?;
