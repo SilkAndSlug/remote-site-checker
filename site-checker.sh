@@ -137,6 +137,7 @@ function init() {
 
 
 	## if TARGET missing or empty, exit
+	[ "$DEBUG_LEVEL" -ge "$DEBUG_DEBUG" ] && echo "init::TARGET $TARGET";
 	if [ -z "$TARGET" ]; then
 		echoerr "No target given";
 		echo_usage;
