@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<project
+	name="SiteChecker"
+	default="list-targets"
+	description="Localised wrapper for SilkAndSlug-style project automation"
+>
+
+	<!-- which version of Master are we expecting? -->
+	<property name="version" value="0.0.8" />
+	<!-- import the master build-file -->
+	<import file="/home/silkandslug/bin/build.xml" />
+
+</project>
